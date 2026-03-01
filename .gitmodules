@@ -1,0 +1,3 @@
+[submodule "dconf_res"]
+	path = dconf_res
+	url = git@10.0.51.111:dconf_res
