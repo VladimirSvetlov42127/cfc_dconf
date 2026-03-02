@@ -185,6 +185,9 @@ bool CfcBasicScene::validate(QList<CfcNode*> nodes, QList<CfcLink*> links)
     return error;
 }
 
+//===================================================================================================================================================
+//	Методы обработки сигналов сцены
+//===================================================================================================================================================
 void CfcBasicScene::removeSelected()
 {
     //  Удаление выделенных связей
@@ -199,6 +202,22 @@ void CfcBasicScene::removeSelected()
 
     return;
 }
+
+void CfcBasicScene::copySelected()
+{
+    return;
+}
+
+void CfcBasicScene::pasteSelected()
+{
+    return;
+}
+
+void CfcBasicScene::cutSelected()
+{
+    return;
+}
+
 
 
 //===================================================================================================================================================
@@ -332,11 +351,6 @@ void CfcBasicScene::removeNode(CfcNode* node)
 
     return;
 }
-
-
-
-
-
 
 
 

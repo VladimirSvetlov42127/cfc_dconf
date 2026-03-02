@@ -105,6 +105,39 @@ CfcBasicLink::CfcBasicLink(QDomNode xml, QGraphicsItem* parent) : QGraphicsObjec
 //===================================================================================================================================================
 //	Открытые методы класса
 //===================================================================================================================================================
+// QList<QPointF> CfcBasicLink::points() const
+// {
+//     QList<QPointF> cfc_points = _points;
+//     cfc_points[0] = source()->scenePos();
+//     cfc_points[1].setY(source()->scenePos().y());
+//     int last = _points.count() - 1;
+//     cfc_points[last] = target()->scenePos();
+//     cfc_points[last-1].setY(target()->scenePos().y());
+
+//     return cfc_points;
+// }
+
+void CfcBasicLink::setSource(CfcSocket* source)
+{
+    _source =  source;
+    if (source) {
+        _points[0] = source->scenePos();
+        _points[1].setY(source->scenePos().y());
+        update();
+    }
+}
+
+void CfcBasicLink::setTarget(CfcSocket* target)
+{
+    _target = target;
+    if (target) {
+        int last = _points.count() - 1;
+        _points[last] = target->scenePos();
+        _points[last - 1].setY(target->scenePos().y());
+        update();
+    }
+}
+
 QList<CfcLine> CfcBasicLink::lines() const
 {
     QList<CfcLine> lines = QList<CfcLine>();
@@ -218,16 +251,29 @@ void CfcBasicLink::needUpdate()
 
 void CfcBasicLink::move()
 {
-    if (source()->scenePos() != _points[0]) {
+    bool source_selected = false;
+    bool target_selected = false;
+    if (source()->parent()->isSelected())
+        source_selected = true;
+    if (target()->parent()->isSelected())
+        target_selected = true;
+
+    if (target_selected && source_selected) {
+        QPointF delta = source()->scenePos() - _points[0];
+        for (int i = 0; i < _points.count(); i++)
+            _points[i] = _points[i] + delta;
+    }
+
+    if (source_selected) {
         _points[0] = source()->scenePos();
         _points[1].setY( _points[0].y());
-        needUpdate();
     }
-    if (target()->scenePos() != _points[_points.count() - 1]) {
+
+    if (target_selected) {
         _points[_points.count() - 1] = target()->scenePos();
         _points[_points.count() - 2].setY(_points[_points.count() - 1].y());
-        needUpdate();
     }
+    needUpdate();
 }
 
 

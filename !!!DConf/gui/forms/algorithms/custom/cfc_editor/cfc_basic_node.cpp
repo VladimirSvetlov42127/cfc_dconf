@@ -119,7 +119,7 @@ bool CfcBasicNode::hasOutput() const
 
 void CfcBasicNode::setOutput()
 {
-    CfcOutputSocket* socket = new CfcOutputSocket(0, inversion(), this);
+    CfcOutputSocket* socket = new CfcOutputSocket(0, inversion(), this, this);
     socket->setPos(size().width(),  size().height() / 2);
     _sockets.append(socket);
 }
@@ -132,7 +132,7 @@ void CfcBasicNode::setInputs(uint8_t count)
 
     //  Добавление входных сокетов
     for (uint8_t i = 0; i < count; i++) {
-        CfcInputSocket* socket = new CfcInputSocket(index + i, this);
+        CfcInputSocket* socket = new CfcInputSocket(index + i, this, this);
         socket->setPos(0, delta + i * delta);
         _sockets.append(socket);
     }
@@ -153,7 +153,7 @@ void CfcBasicNode::addInput()
     setSize(new_size);
 
     //	Добавление входного сокета
-    CfcInputSocket* socket = new CfcInputSocket(sockets().count(), this);
+    CfcInputSocket* socket = new CfcInputSocket(sockets().count(), this, this);
     socket->setPos(QPointF(availableRect().x(), availableRect().y() + delta * count));
     _sockets.append(socket);
 

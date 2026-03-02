@@ -1,19 +1,19 @@
 #include "cfc_socket.h"
-#include <QDebug>
+
 
 //===================================================================================================================================================
 //	Подключение модулей проекта
 //===================================================================================================================================================
-#include "gui/forms/algorithms/custom/cfc_editor/cfc_node.h"
+#include "gui/forms/algorithms/custom/cfc_editor/cfc_basic_node.h"
 #include "gui/forms/algorithms/custom/cfc_editor/cfc_basic_link.h"
 
 //===================================================================================================================================================
 //	Конструктор класса
 //===================================================================================================================================================
-CfcSocket::CfcSocket(uint8_t index, QGraphicsItem* parent) : QGraphicsObject(parent)
+CfcSocket::CfcSocket(uint8_t index, CfcBasicNode* node, QGraphicsItem* parent) : QGraphicsObject(parent)
 {
     _index = index;
-    _parent = dynamic_cast<CfcNode*>(parent);
+    _parent = node;     //  dynamic_cast<CfcNode*>(parent);
     _id = QString::number(++_counter);
     _highlight = false;
     setAcceptHoverEvents(true);
@@ -55,14 +55,12 @@ QRectF CfcSocket::boundingRect() const
 void CfcSocket::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
     _highlight = true;
-    qDebug() << "socket enter";
     QGraphicsItem::hoverEnterEvent(event);
 }
 
 void CfcSocket::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
     _highlight = false;
-    qDebug() << "socket leave";
     QGraphicsItem::hoverLeaveEvent(event);
 }
 

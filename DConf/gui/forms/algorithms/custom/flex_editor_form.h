@@ -56,8 +56,6 @@ public:
 	//===============================================================================================================================================
     CfcScene* scene() { return _scene; }
     QGraphicsView* graphView() const { return _graph_view; }
-
-    //	EditorScene* Scene() { return _scene; }
 	DcAlgCfc* alg() const { return _alg; }
 	bool hasError() const { return _hasError; }
 	QString errorString() const { return _errorString; }
@@ -110,7 +108,6 @@ private:
 	//	Элементы формы
 	//===============================================================================================================================================
 	QGraphicsView* _graph_view;
-    //EditorScene* _scene;
     CfcScene* _scene;
     QTreeView* _tree_menu;
 	QLineEdit* _zoom_edit;
@@ -132,8 +129,6 @@ private:
 	QString _fileName;
 	float _scale_factor;
 	bool _data_changed;
-    // DepCfcParser* _parser;
-
     ServiceManager* _service_manager;
     CfcAlgService* _cfc_service;
 

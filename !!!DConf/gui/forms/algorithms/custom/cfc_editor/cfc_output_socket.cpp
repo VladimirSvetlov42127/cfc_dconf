@@ -25,7 +25,8 @@ namespace {
 //===================================================================================================================================================
 //	Конструктор класса
 //===================================================================================================================================================
-CfcOutputSocket::CfcOutputSocket(uint8_t index, bool inversion, QGraphicsItem* parent) : CfcSocket(index, parent)
+CfcOutputSocket::CfcOutputSocket(uint8_t index, bool inversion, CfcBasicNode* node, QGraphicsItem* parent)
+    : CfcSocket(index, node, parent)
 {
     _inversion = inversion;
 }

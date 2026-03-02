@@ -11,6 +11,7 @@
 #include <QList>
 #include <QVariant>
 #include <QPointF>
+#include <QMenu>
 
 
 //===================================================================================================================================================
@@ -50,6 +51,8 @@ public:
     bool gridEnabled() const { return _grid_enable; }
     void setGrid(bool flag) { _grid_enable = flag; }
     uint16_t bufferCount() { return _buffer_nodes.count() + _buffer_links.count(); }
+    QMenu* contextMenu() { return _context_menu; }
+    void setContextMenu(QMenu* menu) { _context_menu = menu; }
 
     QList<CfcNode*> nodes() const;
     QList<CfcLink*> links() const;
@@ -58,7 +61,15 @@ public:
 
     bool dataProcessing(QList<CfcNode*> nodes, QList<CfcLink*> links);
     bool validate(QList<CfcNode*> nodes, QList<CfcLink*> links);
+
+public slots:
+    //===============================================================================================================================================
+    //	Методы обработки сигналов сцены
+    //===============================================================================================================================================
     void removeSelected();
+    void copySelected();
+    void pasteSelected();
+    void cutSelected();
 
 private:
     //===============================================================================================================================================
@@ -82,6 +93,7 @@ private:
     //===============================================================================================================================================
     //	Свойства класса
     //===============================================================================================================================================
+    QMenu* _context_menu;                       //  Контекстное меню сцены
     CfcTitle* _title_item;                      //  Объект заголовка окна
     QList<MemoryNode> _buffer_nodes;            //  Список узлов для копирования
     QList<MemoryLink> _buffer_links;            //  Список связей для копирования

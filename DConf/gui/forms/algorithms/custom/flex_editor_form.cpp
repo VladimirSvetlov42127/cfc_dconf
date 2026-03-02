@@ -280,11 +280,11 @@ void flexEditorForm::createToolbar()
     connect(zoom_default_action, &QAction::triggered, this, &flexEditorForm::zoomDefaultClicked);
     connect(_append_connector_action, &QAction::triggered, this, &flexEditorForm::addInputs);
     connect(_remove_connector_action, &QAction::triggered, this, &flexEditorForm::removeInputs);
-    connect(_delete_action, &QAction::triggered, scene(), &CfcScene::removeSelected);
 
-    // connect(_copy_action, &QAction::triggered, Scene(), &EditorScene::Copy);
-    // connect(_cut_action, &QAction::triggered, Scene(), &EditorScene::Cut);
-    // connect(_paste_action, &QAction::triggered, Scene(), &EditorScene::Paste);
+    connect(_delete_action, &QAction::triggered, scene(), &CfcScene::removeSelected);
+    connect(_copy_action, &QAction::triggered, scene(), &CfcScene::copySelected);
+    connect(_cut_action, &QAction::triggered, scene(), &CfcScene::cutSelected);
+    connect(_paste_action, &QAction::triggered, scene(), &CfcScene::pasteSelected);
 
 	//	Создание меню
 	QMenu* contens_menu = new QMenu(this);
@@ -293,7 +293,7 @@ void flexEditorForm::createToolbar()
 	contens_menu->addAction(_copy_action);
 	contens_menu->addAction(_cut_action);
 	contens_menu->addAction(_paste_action);
-    // Scene()->SetMenu(contens_menu);
+    scene()->setContextMenu(contens_menu);
 
 	return;
 }

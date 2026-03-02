@@ -32,10 +32,7 @@ CfcNewLink::CfcNewLink(CfcSocket* socket, /*const QPointF& mouse_point,*/ QGraph
     _source_socket = nullptr;
     _target_socket = nullptr;
     _mouse_point = socket->scenePos();
-
-    // setAcceptHoverEvents(true);
-    // setAcceptDrops(true);
-//    scene()->views().at(0)->setCursor(Qt::CrossCursor);
+    //setZValue(25);
 }
 
 

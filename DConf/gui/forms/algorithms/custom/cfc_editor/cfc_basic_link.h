@@ -18,6 +18,7 @@
 //===================================================================================================================================================
 #include "gui/forms/algorithms/custom/cfc_editor/cfc_line.h"
 #include "gui/forms/algorithms/custom/cfc_editor/cfc_node.h"
+#include "gui/forms/algorithms/custom/cfc_editor/cfc_socket.h"
 
 
 //===================================================================================================================================================
@@ -53,12 +54,12 @@ public:
     CfcSocket* target() const { return _target; }
     QString targetID() const { return _target && _target->parent() ? _target->parent()->id() : _target_id; }
     int targetIndex() const { return _target ? _target->index() : _target_index; }
-    void setSource(CfcSocket* source) { _source = source; }
-    void setTarget(CfcSocket* target) { _target = target; }
     void noNeedUpdate() { _need_update = false; }
     bool isNeedUpdate() const { return _need_update; }
     QList<QPointF> points() const { return _points; };
 
+    void setSource(CfcSocket* source);
+    void setTarget(CfcSocket* target);
     QList<CfcLine> lines() const;
     QPolygonF polygon() const;
     void normalize();

@@ -90,10 +90,11 @@ QVariant CfcNode::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if (change == ItemPositionChange && scene()) {
         for (int i = 0; i < sockets().count(); i++) {
-            CfcSocket* socket = sockets().at(0);
+            CfcSocket* socket = sockets().at(i);
             for (int ii = 0; ii < socket->links().count(); ii++)
                 if (socket->links().at(ii))
                     socket->links().at(ii)->move();
+            update();
         }
     }
     return QGraphicsItem::itemChange(change, value);

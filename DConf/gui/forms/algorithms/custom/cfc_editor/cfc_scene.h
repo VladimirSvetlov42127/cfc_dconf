@@ -61,6 +61,7 @@ protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
+    virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
 // private slots:
     //===============================================================================================================================================

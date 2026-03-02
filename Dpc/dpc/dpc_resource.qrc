@@ -209,31 +209,6 @@
 
 
 
-	        <file alias="svg_icons/bi.svg">../../dconf_res/icons/ICO_svg/bi.svg</file>
-	        <file alias="svg_icons/bo.svg">../../dconf_res/icons/ICO_svg/bo.svg</file>
-			<file alias="svg_icons/generator.svg">../../dconf_res/icons/ICO_svg/generator.svg</file>
-			<file alias="svg_icons/impulsePF.svg">../../dconf_res/icons/ICO_svg/impulsePF.svg</file>
-			<file alias="svg_icons/impulseZF.svg">../../dconf_res/icons/ICO_svg/impulseZF.svg</file>
-			<file alias="svg_icons/returndelay.svg">../../dconf_res/icons/ICO_svg/returndelay.svg</file>
-			<file alias="svg_icons/triggerdelay.svg">../../dconf_res/icons/ICO_svg/triggerdelay.svg</file>
-			<file alias="svg_icons/rstrigger.svg">../../dconf_res/icons/ICO_svg/rstrigger.svg</file>
-
-			<file alias="svg_icons/algorithm_custom.svg">../../dconf_res/icons/ICO_svg/algorithm_custom.svg</file>
-			<file alias="svg_icons/grid.svg">../../dconf_res/icons/ICO_svg/grid.svg</file>
-			<file alias="svg_icons/zoom_minus.svg">../../dconf_res/icons/ICO_svg/zoom_minus.svg</file>
-			<file alias="svg_icons/zoom_plus.svg">../../dconf_res/icons/ICO_svg/zoom_plus.svg</file>
-			<file alias="svg_icons/zoom_def.svg">../../dconf_res/icons/ICO_svg/zoom_def.svg</file>
-			
-			<file alias="svg_icons/function_add.svg">../../dconf_res/icons/ICO_svg/function_add.svg</file>
-			<file alias="svg_icons/function_del.svg">../../dconf_res/icons/ICO_svg/function_del.svg</file>
-			<file alias="svg_icons/del_1.svg">../../dconf_res/icons/ICO_svg/del_1.svg</file>
-			<file alias="svg_icons/copy.svg">../../dconf_res/icons/ICO_svg/copy.svg</file>
-			<file alias="svg_icons/cut.svg">../../dconf_res/icons/ICO_svg/cut.svg</file>
-			<file alias="svg_icons/paste.svg">../../dconf_res/icons/ICO_svg/paste.svg</file>
-			<file alias="svg_icons/function.svg">../../dconf_res/icons/ICO_svg/function.svg</file>
-			<file alias="svg_icons/extension.svg">../../dconf_res/icons/ICO_svg/extension.svg</file>
-
-
 	</qresource>
 </RCC>
 
