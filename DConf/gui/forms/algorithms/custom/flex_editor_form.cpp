@@ -64,8 +64,8 @@ flexEditorForm::flexEditorForm(DcController* device, DcAlgCfc* alg, QWidget* par
     qApp->setPalette(palette);
 
     //	Настройка главного окна
-    setWindowIcon(QIcon(":/svg_icons/algorithm_custom.svg"));
-	setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    setWindowIcon(QIcon(":/icons/algorithm_custom.svg"));
+    setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 	QApplication::setWindowIcon(windowIcon());
 	setFileName();
 
@@ -216,14 +216,14 @@ void flexEditorForm::createToolbar()
 
 	//	Кнопки панели инструментов
 	tool_bar->addSeparator();
-    _grid_action = new QAction(QIcon(":/svg_icons/grid.svg"), "Сетка", tool_bar);
+    QAction* _grid_action = new QAction(QIcon(":/icons/grid.svg"), "Сетка", tool_bar);
     _grid_action->setCheckable(true);
     _grid_action->setChecked(true);
     tool_bar->addAction(_grid_action);
 	tool_bar->addSeparator();
 	tool_bar->addWidget(new QLabel(""));
 
-    QAction* zoom_out_action = new QAction(QIcon(":/svg_icons/zoom_minus.svg"), "Уменьшить", tool_bar);
+    QAction* zoom_out_action = new QAction(QIcon(":/icons/zoom_minus.svg"), "Уменьшить", tool_bar);
 	tool_bar->addAction(zoom_out_action);
 
 	_zoom_edit = new QLineEdit(tool_bar);
@@ -234,40 +234,40 @@ void flexEditorForm::createToolbar()
 	_zoom_edit->setText(QString::number(_scale_factor * 100) + "%");
 	tool_bar->addWidget(_zoom_edit);
 
-    QAction* zoom_in_action = new QAction(QIcon(":/svg_icons/zoom_minus.svg"), "Увеличить", tool_bar);
+    QAction* zoom_in_action = new QAction(QIcon(":/icons/zoom_plus.svg"), "Увеличить", tool_bar);
 	tool_bar->addAction(zoom_in_action);
-    QAction* zoom_default_action = new QAction(QIcon(":/svg_icons/zoom_def.svg"), "По умолчанию", tool_bar);
+    QAction* zoom_default_action = new QAction(QIcon(":/icons/zoom_def.svg"), "По умолчанию", tool_bar);
 	tool_bar->addAction(zoom_default_action);
 	tool_bar->addSeparator();
 	tool_bar->addWidget(new QLabel(""));
 
-    _append_connector_action = new QAction(QIcon(":/svg_icons/function_add.svg"), "Добавить конектор", tool_bar);
+    _append_connector_action = new QAction(QIcon(":/icons/function_add.svg"), "Добавить конектор", tool_bar);
 	_append_connector_action->setEnabled(false);
 	tool_bar->addAction(_append_connector_action);
-    _remove_connector_action = new QAction(QIcon(":/svg_icons/function_del.svg"), "Удалить конектор", tool_bar);
+    _remove_connector_action = new QAction(QIcon(":/icons/function_del.svg"), "Удалить конектор", tool_bar);
 	_remove_connector_action->setEnabled(false);
 	tool_bar->addAction(_remove_connector_action);
 	tool_bar->addSeparator();
 	tool_bar->addWidget(new QLabel(""));
 
-    _delete_action = new QAction(QIcon(":/svg_icons/del_1.svg"), "Удалить", tool_bar);
+    _delete_action = new QAction(QIcon(":/icons/del_1.svg"), "Удалить", tool_bar);
 	_delete_action->setShortcut(QKeySequence::Delete);
 	_delete_action->setEnabled(false);
 	tool_bar->addAction(_delete_action);
 	tool_bar->addSeparator();
 	tool_bar->addWidget(new QLabel(""));
 
-    _copy_action = new QAction(QIcon(":/svg_icons/copy.svg"), "Копировать", tool_bar);
+    _copy_action = new QAction(QIcon(":/icons/copy.svg"), "Копировать", tool_bar);
 	_copy_action->setShortcut(QKeySequence::Copy);
 	_copy_action->setEnabled(false);
 	tool_bar->addAction(_copy_action);
 
-    _cut_action = new QAction(QIcon(":/svg_icons/cut.svg"), "Вырезать", tool_bar);
+    _cut_action = new QAction(QIcon(":/icons/cut.svg"), "Вырезать", tool_bar);
 	_cut_action->setShortcut(QKeySequence::Cut);
 	_cut_action->setEnabled(false);
 	tool_bar->addAction(_cut_action);
 
-    _paste_action = new QAction(QIcon(":/svg_icons/paste.svg"), "Вставить", tool_bar);
+    _paste_action = new QAction(QIcon(":/icons/paste.svg"), "Вставить", tool_bar);
 	_paste_action->setShortcut(QKeySequence::Paste);
 	_paste_action->setEnabled(false);
 	tool_bar->addAction(_paste_action);

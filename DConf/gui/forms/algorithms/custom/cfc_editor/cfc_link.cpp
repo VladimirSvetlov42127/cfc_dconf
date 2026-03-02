@@ -101,10 +101,12 @@ void CfcLink::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, Q
 void CfcLink::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     QPointF position = QPointF((int)event->pos().x(), (int)event->pos().y());
-    if (!shape().contains(event->pos())) {
-        event->setAccepted(false);
-        return;
-    }
+    // if (!shape().contains(event->pos())) {
+    //     event->setAccepted(false);
+    //     qDebug() << "shape";
+
+    //     return;
+    // }
 
     //  Не реагирует на клик по узлу
     for (int i = 0; i < points().count(); i++) {
@@ -119,8 +121,9 @@ void CfcLink::mousePressEvent(QGraphicsSceneMouseEvent* event)
     if (event->buttons() & Qt::RightButton) {
         if (!isSelected())
             return;
-        _menu_point = position;
+        _menu_point = event->scenePos();
         _menu.exec(event->screenPos());
+        event->ignore();
         return;
     }
 
@@ -132,7 +135,6 @@ void CfcLink::mousePressEvent(QGraphicsSceneMouseEvent* event)
     }
 
     return;
-
 }
 
 void CfcLink::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)

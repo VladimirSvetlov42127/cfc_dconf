@@ -24,22 +24,22 @@ struct FlexEditorNode {
     QString section; };
 
 QList<FlexEditorNode> FlexEditorList = {
-    { "And", "AND", ":/svg_icons/function.svg", SECTION_LOGICAL },
-    { "Or", "OR", ":/svg_icons/function.svg", SECTION_LOGICAL },
-    { "Not", "NOT", ":/svg_icons/function.svg", SECTION_LOGICAL },
-    { "Xor", "XOR", ":/svg_icons/function.svg", SECTION_LOGICAL},
+    { "And", "AND", ":/icons/function.svg", SECTION_LOGICAL },
+    { "Or", "OR", ":/icons/function.svg", SECTION_LOGICAL },
+    { "Not", "NOT", ":/icons/function.svg", SECTION_LOGICAL },
+    { "Xor", "XOR", ":/icons/function.svg", SECTION_LOGICAL},
 
-    { "BI", "Дискретный вход", ":/svg_icons/bi.svg", SECTION_INPUT_OUTPUT },
-    { "BO", "Дискретный выход", ":/svg_icons/bo.svg", SECTION_INPUT_OUTPUT },
+    { "BI", "Дискретный вход", ":/icons/bi.svg", SECTION_INPUT_OUTPUT },
+    { "BO", "Дискретный выход", ":/icons/bo.svg", SECTION_INPUT_OUTPUT },
 
-    { "Generator", "Генератор", ":/svg_icons/generator.svg", SECTION_GENERATORS },
-    { "ImpulsePF", "Импульс по ПФ", ":/svg_icons/impulsePF.svg", SECTION_GENERATORS },
-    { "ImpulseZF", "Импульс по ЗФ", ":/svg_icons/impulseZF.svg", SECTION_GENERATORS },
+    { "Generator", "Генератор", ":/icons/generator.svg", SECTION_GENERATORS },
+    { "ImpulsePF", "Импульс по ПФ", ":/icons/impulsePF.svg", SECTION_GENERATORS },
+    { "ImpulseZF", "Импульс по ЗФ", ":/icons/impulseZF.svg", SECTION_GENERATORS },
 
-    { "ReturnDelay", "Задержка возврата", ":/svg_icons/returndelay.svg", SECTION_CONTROL },
-    { "TriggerDelay", "Задержка срабатывания", ":/svg_icons/triggerdelay.svg", SECTION_CONTROL},
+    { "ReturnDelay", "Задержка возврата", ":/icons/returndelay.svg", SECTION_CONTROL },
+    { "TriggerDelay", "Задержка срабатывания", ":/icons/triggerdelay.svg", SECTION_CONTROL},
 
-    { "RsTrigger", "RS-триггер", ":/svg_icons/rstrigger.svg", SECTION_TRIGGERS }
+    { "RsTrigger", "RS-триггер", ":/icons/rstrigger.svg", SECTION_TRIGGERS }
 };
 
 
@@ -59,7 +59,7 @@ CfcEditorModel::CfcEditorModel(QObject* parent) : QAbstractItemModel(parent)
                 break;
             }
         if (!section_item) {
-            section_item = new CfcEditorItem(node.section, QIcon(":/svg_icons/extension.svg"), QString(), _root_item);
+            section_item = new CfcEditorItem(node.section, QIcon(":/icons/extension.svg"), QString(), _root_item);
             _root_item->appendChild(section_item);
         }
         section_item->appendChild(new CfcEditorItem(node.name, QIcon(node.icon), node.index, section_item));

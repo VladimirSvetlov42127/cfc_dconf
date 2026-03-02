@@ -166,16 +166,24 @@ void CfcScene::dropEvent(QGraphicsSceneDragDropEvent* event)
 
 void CfcScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    qDebug() << "press in selected (0)" << selectedItems().count();
-
+    //  Вывод меню изменения связи
     QPointF position = QPointF(event->scenePos().x(), event->scenePos().y());
-    CfcSocket* socket = dynamic_cast<CfcSocket*>(itemAt(position, QTransform()));
+    CfcLink* link = dynamic_cast<CfcLink*>(itemAt(position, QTransform()));
+    if (link && event->button() == Qt::RightButton) {
+        link->mousePressEvent(event);
+        event->accept();
+        return;
+    }
 
-    qDebug() << "press in selected (1)" << selectedItems().count();
+    //  Костыль для вывода контекстного меню
+    if (event->button() == Qt::RightButton) {
+        event->accept();
+        return;
+    }
+
     //  Начало рисования нового соединения
+    CfcSocket* socket = dynamic_cast<CfcSocket*>(itemAt(position, QTransform()));
     if ((event->buttons() & Qt::LeftButton) && socket) {
-
-        //  Проверка входного сокета
         if (socket->socketType() == CfcSocket::INPUT_SOCKET && socket->links().count() > 0) {
             Dpc::Gui::MsgBox::error(QString("Данный вход уже используется."));
             QGraphicsScene::mousePressEvent(event);
@@ -183,20 +191,14 @@ void CfcScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
         }
 
         //  Добавление новой связи
-        qDebug() << "deselected";
         clearSelection();
         _new_link = new CfcNewLink(socket/*, position*/);
         addItem(_new_link);
-
-
-        QGraphicsScene::mousePressEvent(event);
-        //event->setAccepted(true);
+        event->accept();
 
         return;
     }
-    //QGraphicsScene::mousePressEvent(event);
-    // event->setAccepted(true);
-    qDebug() << "press out selected" << selectedItems().count();
+    QGraphicsScene::mousePressEvent(event);
 }
 
 void CfcScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
@@ -204,6 +206,7 @@ void CfcScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     //  Рисование нового соединения
     if (_new_link && (event->buttons() & Qt::LeftButton)) {
         _new_link->mouseMoveEvent(event);
+        QGraphicsScene::mouseMoveEvent(event);
         return;
     }
     QGraphicsScene::mouseMoveEvent(event);
@@ -211,7 +214,6 @@ void CfcScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 void CfcScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
-    qDebug() << "release in selected" << selectedItems().count();
     //  Завершение отрисовки новой связи между элементами
     if (_new_link && event->button() == Qt::LeftButton) {
         _new_link->mouseReleaseEvent(event);
@@ -229,7 +231,6 @@ void CfcScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         event->accept();
     }
 
-    qDebug() << "release out selected" << selectedItems().count();
     QGraphicsScene::mouseReleaseEvent(event);
 
 }
@@ -265,10 +266,9 @@ void CfcScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     // if (!m.actions().isEmpty())
     //     m.exec(event->screenPos());
 
-    qDebug() << "context selected" << selectedItems().count();
     contextMenu()->exec(event->screenPos());
 
-    //QGraphicsScene::contextMenuEvent(event);
+    QGraphicsScene::contextMenuEvent(event);
 
 }
 
