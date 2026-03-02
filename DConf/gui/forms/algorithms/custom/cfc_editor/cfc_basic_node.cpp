@@ -14,8 +14,9 @@
 CfcBasicNode::CfcBasicNode(QString id, QGraphicsItem* parent) : QGraphicsObject(parent)
 {
     //  Формирование id соединения
+    bool ok;
     if (!id.isEmpty()) {
-        uint16_t int_id = id.toUInt();
+        uint16_t int_id = id.toUInt(&ok);
         if (int_id >= _counter) _counter = int_id;
         _id = id; }
     else _id = QString::number(++_counter);
@@ -31,8 +32,10 @@ CfcBasicNode::CfcBasicNode(QString id, QGraphicsItem* parent) : QGraphicsObject(
 CfcBasicNode::CfcBasicNode(QDomNode xml, QGraphicsItem* parent) : QGraphicsObject(parent)
 {
     //	Получение параметров связи
+    bool ok;
     _id = xml.toElement().attribute("__id");
-    if (_id.toInt() >= _counter)
+    int int_id = _id.toInt(&ok);
+    if (ok && int_id >= _counter)
         _counter = _id.toInt();
     _name = xml.toElement().attribute("__type");
 
