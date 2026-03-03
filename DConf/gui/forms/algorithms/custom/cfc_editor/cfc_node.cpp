@@ -5,7 +5,6 @@
 //	Подключение модулей проекта
 //===================================================================================================================================================
 #include "gui/forms/algorithms/custom/cfc_editor/cfc_basic_link.h"
-#include "gui/dialogs/params_dialog.h"
 
 //===================================================================================================================================================
 //	список переменных
@@ -22,16 +21,10 @@ namespace {
 //===================================================================================================================================================
 CfcNode::CfcNode(QString id, QGraphicsItem* parent) : CfcBasicNode(id, parent)
 {
-    //  Создание меню
-    //_menu = new QMenu();
-    _menu.addAction("Параметры", this, &CfcNode::editNode);
 }
 
 CfcNode::CfcNode(QDomNode xml, QGraphicsItem* parent) : CfcBasicNode(xml, parent)
 {
-    //  Создание меню
-    //_menu = new QMenu();
-    _menu.addAction("Параметры", this, &CfcNode::editNode);
 }
 
 
@@ -61,18 +54,10 @@ void CfcNode::mousePressEvent(QGraphicsSceneMouseEvent* event)
         return;
     }
 
-    if (event->button() == Qt::RightButton) {
-        _menu.exec(event->screenPos());
-        event->setAccepted(false);
-        return;
+    if (event->button() == Qt::LeftButton) {
+        setCursor(QCursor(Qt::ClosedHandCursor));
+        event->setAccepted(true);
     }
-
-    // if (event->button() == Qt::LeftButton) {
-    //     setCursor(QCursor(Qt::ClosedHandCursor));
-    //     event->setAccepted(true);
-    // }
-    setCursor(QCursor(Qt::ClosedHandCursor));
-    event->setAccepted(true);
 
     return;
 }
@@ -98,33 +83,6 @@ QVariant CfcNode::itemChange(GraphicsItemChange change, const QVariant &value)
         }
     }
     return QGraphicsItem::itemChange(change, value);
-}
-
-
-//===================================================================================================================================================
-//	Метод обработки сигнала меню
-//===================================================================================================================================================
-void CfcNode::editNode()
-{
-    //	Проверка свойств
-    if (name() == "BO" || name() == "BI")
-        return;
-    if (paramsList().count() < 1)
-        return;
-
-    //	Редактирование параметров элемента
-    ParamsDialog dialog(paramsList());
-    dialog.exec();
-    if (dialog.result() != QDialog::Accepted)
-        return;
-
-    QList<NodeParam> params = dialog.paramsList();
-    for (int i = 0; i < params.count(); i++)
-        setParam(params.at(i).index, params.at(i).value);
-    update();
-
-    return;
-
 }
 
 

@@ -24,6 +24,8 @@
 #include "service_manager/services/alg_cfc/cfc_service_input.h"
 #include "service_manager/services/alg_cfc/cfc_service_output.h"
 #include "gui/forms/algorithms/custom/cfc_editor/cfc_socket.h"
+#include "gui/dialogs/params_dialog.h"
+#include "gui/dialogs/binding_dialog.h"
 
 
 //===================================================================================================================================================
@@ -41,7 +43,21 @@ namespace {
 //===================================================================================================================================================
 CfcScene::CfcScene(uint16_t id, ServiceManager* service_manager, const QString& title, QGraphicsScene* parent) : CfcBasicScene(id, service_manager, title, parent)
 {
+    //  Свойства класса
+    _service_manager = service_manager;
+    _cfc_service = service_manager->CfcAlg(id);
     _new_link = nullptr;
+    _menu_point = QPointF();
+
+    //  Параметры меню
+    _action_bi = new QAction("Привязка", this);
+    _action_bo = new QAction("Привязка", this);
+    _action_param = new QAction("Параметры", this);
+
+    connect(_action_bi, &QAction::triggered, this, &CfcScene::onActionBI);
+    connect(_action_bo, &QAction::triggered, this, &CfcScene::onActionBO);
+    connect(_action_param, &QAction::triggered, this, &CfcScene::onActionParam);
+
 }
 
 
@@ -99,6 +115,72 @@ CfcNode* CfcScene::newEditorNode(QString name)
     }
 
     return nullptr;
+}
+
+
+//===================================================================================================================================================
+//	Методы обработки сигналов меню
+//===================================================================================================================================================
+void CfcScene::onActionBI()
+{
+    CfcBI* bi_node = dynamic_cast<CfcBI*>(itemAt(_menu_point, QTransform()));
+    if (!bi_node)
+        return;
+
+    BindingDialog dialog(BindingDialog::TYPE_INPUT, serviceManager());
+    if (dialog.exec() != QDialog::Accepted)
+        return;
+
+    InputSignal* input_signal = dialog.selectedSignal();
+    if (!bi_node->cfcInput()) {
+        auto input = cfcService()->makeInput(serviceManager()->nextCfcID(), cfcService()->freePin());
+        bi_node->setCfcInput(input);
+    }
+    bi_node->cfcInput()->setSource(input_signal);
+    update();
+
+    return;
+}
+
+void CfcScene::onActionBO()
+{
+    CfcBO* bo_node = dynamic_cast<CfcBO*>(itemAt(_menu_point, QTransform()));
+    if (!bo_node)
+        return;
+
+    BindingDialog dialog(BindingDialog::TYPE_OUTPUT, serviceManager());
+    if (dialog.exec() != QDialog::Accepted)
+        return;
+
+    VirtualInputSignal* output_signal = dynamic_cast<VirtualInputSignal*>(dialog.selectedSignal());
+    if (!output_signal)
+        return;
+
+    if (!bo_node->cfcOutput()) {
+        auto output = cfcService()->makeOutput(serviceManager()->nextCfcID(), cfcService()->freePin());
+        bo_node->setCfcOutput(output);
+    }
+    bo_node->cfcOutput()->setTarget(output_signal);
+    update();
+
+    return;
+}
+
+void CfcScene::onActionParam()
+{
+    CfcNode* node = dynamic_cast<CfcNode*>(itemAt(_menu_point, QTransform()));
+    if (!node)
+        return;
+
+    ParamsDialog dialog(node->paramsList());
+    dialog.exec();
+    if (dialog.result() != QDialog::Accepted)
+        return;
+
+    QList<NodeParam> params = dialog.paramsList();
+    for (int i = 0; i < params.count(); i++)
+        node->setParam(params.at(i).index, params.at(i).value);
+    update();
 }
 
 
@@ -237,52 +319,43 @@ void CfcScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
 void CfcScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
-    // DseGraphicsElement *elem = nullptr;
-    // QList<QGraphicsItem*> list = items(event->scenePos());
-    // QList<QGraphicsItem*>::const_iterator it = list.constBegin();
-    // while( it != list.constEnd() && !elem) {
-    //     elem = dynamic_cast<DseGraphicsElement*>(*it);
-    //     it++;
-    // }
+    //  Проверка наличия узла
+    QPointF position = QPointF(event->scenePos().x(), event->scenePos().y());
+    _menu_point = position;
+    CfcNode* node = dynamic_cast<CfcNode*>(itemAt(position, QTransform()));
 
-    // QMenu m;
-    // if (elem) {
-    //     if (!elem->isSelected()) {
-    //         clearSelection();
-    //         elem->setSelected(true);
-    //     }
-    //     if (selectedItems().count() == 1) {
-    //         m.addActions(elem->actionList());
-    //     }
-    // }
+    //  Выделение узла
+    if (!node->isSelected()) {
+        clearSelection();
+        node->setSelected(true);
+    }
 
-    // if (contextMenu() && !contextMenu()->actions().isEmpty()) {
-    //     if (!m.actions().isEmpty())
-    //         m.addSeparator();
-    //     m.addActions(contextMenu()->actions());
-    // }
+    //  Формирование нового меню
+    QMenu menu;
+    if (node->name() == "BI") {
+        menu.addAction(_action_bi);
+        menu.addSeparator();
+    }
+    if (node->name() == "BO") {
+        menu.addAction(_action_bo);
+        menu.addSeparator();
+    }
 
-    // m_pastePos = event->scenePos();
-    // if (!m.actions().isEmpty())
-    //     m.exec(event->screenPos());
-
-    contextMenu()->exec(event->screenPos());
+    if (node->name() != "BO" && node->name() != "BI" && node->paramsList().count() > 0) {
+        menu.addAction(_action_param);
+        menu.addSeparator();
+    }
+    menu.addActions(contextMenu()->actions());
+    menu.exec(event->screenPos());
 
     QGraphicsScene::contextMenuEvent(event);
 
+    return;
 }
 
 
 
 
-//===================================================================================================================================================
-//	Методы обработки сигналов сцены
-//===================================================================================================================================================
-
-
-//===================================================================================================================================================
-//	Вспомогательные методы класса
-//===================================================================================================================================================
 
 
 
