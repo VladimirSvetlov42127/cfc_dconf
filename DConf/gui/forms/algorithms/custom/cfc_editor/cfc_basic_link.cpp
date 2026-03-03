@@ -288,8 +288,8 @@ QDomNode CfcBasicLink::toXML() const
     //	Стандартные аттрибуты соединения
     xml_link.setAttribute("__type", "DseGraphicsConnection");
     xml_link.setAttribute("__id", id());
-    xml_link.setAttribute("source", sourceID());
-    xml_link.setAttribute("target", targetID());
+    xml_link.setAttribute("source", source()->id());
+    xml_link.setAttribute("target", target()->id());
     xml_link.setAttribute("source_connector", sourceIndex());
     xml_link.setAttribute("target_connector", targetIndex());
 
