@@ -288,11 +288,12 @@ void flexEditorForm::createToolbar()
 
 	//	Создание меню
 	QMenu* contens_menu = new QMenu(this);
-	contens_menu->addAction(_delete_action);
-	contens_menu->addSeparator();
 	contens_menu->addAction(_copy_action);
 	contens_menu->addAction(_cut_action);
 	contens_menu->addAction(_paste_action);
+    contens_menu->addSeparator();
+    contens_menu->addAction(_delete_action);
+
     scene()->setContextMenu(contens_menu);
 
 	return;
