@@ -261,6 +261,8 @@ void CfcScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             CfcLink* link = new CfcLink(QString(), _new_link->points());
             link->setSource(_new_link->source());
             link->setTarget(_new_link->target());
+            link->source()->appendLink(link);
+            link->target()->appendLink(link);
             addItem(link);
         }
 
