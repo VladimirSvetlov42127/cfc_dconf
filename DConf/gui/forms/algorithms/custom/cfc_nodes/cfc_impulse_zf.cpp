@@ -55,22 +55,6 @@ CfcImpulseZF::CfcImpulseZF(QDomNode xml, QGraphicsItem* parent) : CfcNode(xml, p
         setParam(paramNames().at(i), paramValues().at(i));
 }
 
-CfcImpulseZF::CfcImpulseZF(MemoryNode node, QGraphicsItem* parent) : CfcNode(QString(), parent)
-{
-    //  Настройка параметров
-    setName("ImpulseZF");
-    setSize(node.size);
-    setNodeType(RZA_IMPULSE_LEADING);
-    setInversion(false);
-    initInputs(1, 1);
-    addParam("Время срабатывания, мс", "time", 200, "t, мс = ");
-
-    for (int i = 0; i < node.params.count(); i++)
-        setParam(i, node.params.at(i));
-    for (int i = 0; i < node.sockets.count(); i++)
-        node.sockets.at(i) == CfcSocket::OUTPUT_SOCKET ? setOutput() : addInput();
-}
-
 
 //===================================================================================================================================================
 //	Вспомогательные методы класса

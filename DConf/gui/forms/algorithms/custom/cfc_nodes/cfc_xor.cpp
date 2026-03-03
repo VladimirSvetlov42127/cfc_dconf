@@ -49,19 +49,6 @@ CfcXor::CfcXor(QDomNode xml, QGraphicsItem* parent) : CfcNode(xml, parent)
     initInputs(2, 16);
 }
 
-CfcXor::CfcXor(MemoryNode node, QGraphicsItem* parent) : CfcNode(QString(), parent)
-{
-    //  Настройка параметров
-    setName("Xor");
-    setNodeType(RZA_XOR);
-    setSize(node.size);
-    setInversion(true);
-    initInputs(2, 16);
-
-    for (int i = 0; i < node.sockets.count(); i++)
-        node.sockets.at(i) == CfcSocket::OUTPUT_SOCKET ? setOutput() : addInput();
-}
-
 
 //===================================================================================================================================================
 //	Вспомогательные методы класса

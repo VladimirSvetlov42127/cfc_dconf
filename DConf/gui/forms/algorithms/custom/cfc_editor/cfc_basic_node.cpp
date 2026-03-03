@@ -301,19 +301,3 @@ QDomNode CfcBasicNode::toXML()
     return xml_node;
 }
 
-MemoryNode CfcBasicNode::toMemory()
-{
-    MemoryNode memory_node;
-    memory_node.name = name();
-    memory_node.size = size();
-    for (int ii = 0; ii < paramsList().count(); ii++) {
-        QVariant value = paramsList().at(ii).value;
-        memory_node.params.append(value);
-    }
-    for (int i = 0; i < sockets().count(); i++) {
-        sockets().at(i)->socketType() == CfcSocket::OUTPUT_SOCKET ? memory_node.sockets.append(CfcSocket::OUTPUT_SOCKET) :
-            memory_node.sockets.append(CfcSocket::INPUT_SOCKET);
-    }
-
-    return memory_node;
-}

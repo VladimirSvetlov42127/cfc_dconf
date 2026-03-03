@@ -33,7 +33,6 @@ public:
 	//===============================================================================================================================================
     CfcAnd(QString id = QString(), QSizeF node_size = QSizeF(), QGraphicsItem* parent = nullptr);
     CfcAnd(QDomNode xml, QGraphicsItem* parent = nullptr);
-    CfcAnd(MemoryNode node, QGraphicsItem* parent = nullptr);
 
 protected:
 	//===============================================================================================================================================

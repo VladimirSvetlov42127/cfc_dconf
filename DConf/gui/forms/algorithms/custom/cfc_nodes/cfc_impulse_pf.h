@@ -33,7 +33,6 @@ public:
 	//===============================================================================================================================================
     CfcImpulsePF(QString id = QString(), QSizeF node_size = QSizeF(), QGraphicsItem* parent = nullptr);
     CfcImpulsePF(QDomNode xml, QGraphicsItem* parent = nullptr);
-    CfcImpulsePF(MemoryNode node, QGraphicsItem* parent = nullptr);
 
 protected:
 	//===============================================================================================================================================

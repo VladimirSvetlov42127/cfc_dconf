@@ -20,10 +20,11 @@
 //===================================================================================================================================================
 //	Подключение модулей проекта
 //===================================================================================================================================================
-#include <gui/forms/algorithms/custom/cfc_nodes/cfc_nodes_list.h>
 #include "service_manager/services/alg_cfc/cfc_service_input.h"
 #include "service_manager/services/alg_cfc/cfc_service_output.h"
 #include "gui/forms/algorithms/custom/cfc_editor/cfc_socket.h"
+#include "gui/forms/algorithms/custom/cfc_nodes/cfc_bi.h"
+#include "gui/forms/algorithms/custom/cfc_nodes/cfc_bo.h"
 #include "gui/dialogs/params_dialog.h"
 #include "gui/dialogs/binding_dialog.h"
 
@@ -44,10 +45,7 @@ namespace {
 CfcScene::CfcScene(uint16_t id, ServiceManager* service_manager, const QString& title, QGraphicsScene* parent) : CfcBasicScene(id, service_manager, title, parent)
 {
     //  Свойства класса
-    _service_manager = service_manager;
-    _cfc_service = service_manager->CfcAlg(id);
     _new_link = nullptr;
-    _menu_point = QPointF();
 
     //  Параметры меню
     _action_bi = new QAction("Привязка", this);
@@ -57,7 +55,6 @@ CfcScene::CfcScene(uint16_t id, ServiceManager* service_manager, const QString& 
     connect(_action_bi, &QAction::triggered, this, &CfcScene::onActionBI);
     connect(_action_bo, &QAction::triggered, this, &CfcScene::onActionBO);
     connect(_action_param, &QAction::triggered, this, &CfcScene::onActionParam);
-
 }
 
 
@@ -77,53 +74,13 @@ void CfcScene::showItems(const QList<CfcNode*>& nodes, const QList<CfcLink*>& li
     return;
 }
 
-CfcNode* CfcScene::newEditorNode(QString name)
-{
-    if (name == "And")
-        return new CfcAnd();
-    if (name == "Generator")
-        return new CfcGenerator();
-    if (name == "ImpulsePF")
-        return new CfcImpulsePF();
-    if (name == "ImpulseZF")
-        return new CfcImpulseZF();
-    if (name == "Not")
-        return new CfcNot();
-    if (name == "Or")
-        return new CfcOr();
-    if (name == "ReturnDelay")
-        return new CfcReturnDelay();
-    if (name == "RsTrigger")
-        return new CfcRsTrigger();
-    if (name == "TriggerDelay")
-        return new CfcTriggerDelay();
-    if (name == "Xor")
-        return new CfcXor();
-
-    if (name == "BI") {
-        CfcBI* node = new CfcBI();
-        CfcServiceInput* input = cfcService()->makeInput(serviceManager()->nextCfcID(), cfcService()->freePin());
-        node->setCfcInput(input);
-        return node;
-    }
-
-    if (name == "BO") {
-        CfcBO* node = new CfcBO();
-        CfcServiceOutput* output = cfcService()->makeOutput(serviceManager()->nextCfcID(), cfcService()->freePin());
-        node->setCfcOutput(output);
-        return node;
-    }
-
-    return nullptr;
-}
-
 
 //===================================================================================================================================================
 //	Методы обработки сигналов меню
 //===================================================================================================================================================
 void CfcScene::onActionBI()
 {
-    CfcBI* bi_node = dynamic_cast<CfcBI*>(itemAt(_menu_point, QTransform()));
+    CfcBI* bi_node = dynamic_cast<CfcBI*>(itemAt(menuPoint(), QTransform()));
     if (!bi_node)
         return;
 
@@ -144,7 +101,7 @@ void CfcScene::onActionBI()
 
 void CfcScene::onActionBO()
 {
-    CfcBO* bo_node = dynamic_cast<CfcBO*>(itemAt(_menu_point, QTransform()));
+    CfcBO* bo_node = dynamic_cast<CfcBO*>(itemAt(menuPoint(), QTransform()));
     if (!bo_node)
         return;
 
@@ -168,7 +125,7 @@ void CfcScene::onActionBO()
 
 void CfcScene::onActionParam()
 {
-    CfcNode* node = dynamic_cast<CfcNode*>(itemAt(_menu_point, QTransform()));
+    CfcNode* node = dynamic_cast<CfcNode*>(itemAt(menuPoint(), QTransform()));
     if (!node)
         return;
 
@@ -321,29 +278,31 @@ void CfcScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     //  Проверка наличия узла
     QPointF position = QPointF(event->scenePos().x(), event->scenePos().y());
-    _menu_point = position;
+    setMenuPoint(position);
     CfcNode* node = dynamic_cast<CfcNode*>(itemAt(position, QTransform()));
 
     //  Выделение узла
-    if (!node->isSelected()) {
+    if (node && !node->isSelected()) {
         clearSelection();
         node->setSelected(true);
     }
 
     //  Формирование нового меню
     QMenu menu;
-    if (node->name() == "BI") {
-        menu.addAction(_action_bi);
-        menu.addSeparator();
-    }
-    if (node->name() == "BO") {
-        menu.addAction(_action_bo);
-        menu.addSeparator();
-    }
+    if (node) {
+        if (node->name() == "BI") {
+            menu.addAction(_action_bi);
+            menu.addSeparator();
+        }
+        if (node->name() == "BO") {
+            menu.addAction(_action_bo);
+            menu.addSeparator();
+        }
 
-    if (node->name() != "BO" && node->name() != "BI" && node->paramsList().count() > 0) {
-        menu.addAction(_action_param);
-        menu.addSeparator();
+        if (node->name() != "BO" && node->name() != "BI" && node->paramsList().count() > 0) {
+            menu.addAction(_action_param);
+            menu.addSeparator();
+        }
     }
     menu.addActions(contextMenu()->actions());
     menu.exec(event->screenPos());

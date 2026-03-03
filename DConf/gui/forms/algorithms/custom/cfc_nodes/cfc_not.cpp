@@ -49,18 +49,6 @@ CfcNot::CfcNot(QDomNode xml, QGraphicsItem* parent) : CfcNode(xml, parent)
     initInputs(1, 1);
 }
 
-CfcNot::CfcNot(MemoryNode node, QGraphicsItem* parent) : CfcNode(QString(), parent)
-{
-    //  Настройка параметров
-    setName("Not");
-    setNodeType(RZA_INVERS);
-    setSize(node.size);
-    setInversion(true);
-    initInputs(1, 1);
-
-    setOutput();
-    setInputs(1);
-}
 
 
 //===================================================================================================================================================

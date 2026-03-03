@@ -33,7 +33,6 @@ public:
 	//===============================================================================================================================================
     CfcTriggerDelay(QString id = QString(), QSizeF node_size = QSizeF(), QGraphicsItem* parent = nullptr);
     CfcTriggerDelay(QDomNode xml, QGraphicsItem* parent = nullptr);
-    CfcTriggerDelay(MemoryNode node, QGraphicsItem* parent = nullptr);
 
 protected:
 	//===============================================================================================================================================

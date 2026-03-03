@@ -57,22 +57,6 @@ CfcGenerator::CfcGenerator(QDomNode xml, QGraphicsItem* parent) : CfcNode(xml, p
         setParam(paramNames().at(i), paramValues().at(i));
 }
 
-CfcGenerator::CfcGenerator(MemoryNode node, QGraphicsItem* parent) : CfcNode(QString(), parent)
-{
-    //  Настройка параметров
-    setName("Generator");
-    setNodeType(RZA_PULSE_REPETITIVE);
-    setInversion(false);
-    initInputs(0, 0);
-    setSize(node.size);
-    addParam("Частота", "period", 50, "Частота, Гц = ");
-    addParam("Величина", "value", 0, "Величина = ");
-
-    for (int i = 0; i < node.params.count(); i++)
-        setParam(i, node.params.at(i));
-
-    setOutput();
-}
 
 
 //===================================================================================================================================================

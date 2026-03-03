@@ -42,8 +42,8 @@ public:
     //===============================================================================================================================================
     //	Открытые методы класса
     //===============================================================================================================================================
-    QList<MemoryNode> bufferNodes() const { return _buffer_nodes; }
-    QList<MemoryLink> bufferLinks() const { return _buffer_links; }
+    QList<CfcNode*> bufferNodes() const { return _buffer_nodes; }
+    QList<CfcLink*> bufferLinks() const { return _buffer_links; }
     ServiceManager* serviceManager() const { return _service_manager; }
     CfcAlgService* cfcService() const { return _cfc_service; }
     void setTitle(const QString& title) { _title_item->setTitle(title); }
@@ -53,7 +53,10 @@ public:
     uint16_t bufferCount() { return _buffer_nodes.count() + _buffer_links.count(); }
     QMenu* contextMenu() { return _context_menu; }
     void setContextMenu(QMenu* menu) { _context_menu = menu; }
+    QPointF menuPoint() const { return _menu_point; }
+    void setMenuPoint(const QPointF& point) { _menu_point = point; }
 
+    CfcNode* newEditorNode(QString name);
     QList<CfcNode*> nodes() const;
     QList<CfcLink*> links() const;
     QList<CfcNode*> selectedNodes() const;
@@ -80,6 +83,7 @@ private:
     void nodesProcessing(QList<CfcNode*> nodes);
     void removeLink(CfcLink* link);
     void removeNode(CfcNode* node);
+    CfcNode* copyNode(CfcNode* source);
 
 signals:
     //===============================================================================================================================================
@@ -95,11 +99,13 @@ private:
     //===============================================================================================================================================
     QMenu* _context_menu;                       //  Контекстное меню сцены
     CfcTitle* _title_item;                      //  Объект заголовка окна
-    QList<MemoryNode> _buffer_nodes;            //  Список узлов для копирования
-    QList<MemoryLink> _buffer_links;            //  Список связей для копирования
+    QList<CfcNode*> _buffer_nodes;              //  Список узлов для копирования
+    QList<CfcLink*> _buffer_links;              //  Список связей для копирования
     ServiceManager* _service_manager;           //  Менеджер сервисов
     CfcAlgService* _cfc_service;                //  Сервис алгоритма гибкой логикиж
     bool _grid_enable;                          //  Флаг активации сетки
+    QPointF _basic_point;                       //  Базовая точка для копирования и вставки
+    QPointF _menu_point;                        //  Точка вызова меню
 };
 
 #endif // __CFC_BASIC_SCENE_H__

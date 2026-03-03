@@ -49,19 +49,6 @@ CfcOr::CfcOr(QDomNode xml, QGraphicsItem* parent) : CfcNode(xml, parent)
     initInputs(2, 16);
 }
 
-CfcOr::CfcOr(MemoryNode node, QGraphicsItem* parent) : CfcNode(QString(), parent)
-{
-    //  Настройка параметров
-    setName("Or");
-    setNodeType(RZA_OR);
-    setSize(node.size);
-    setInversion(false);
-    initInputs(2, 16);
-
-    for (int i = 0; i < node.sockets.count(); i++)
-        node.sockets.at(i) == CfcSocket::OUTPUT_SOCKET ? setOutput() : addInput();
-}
-
 
 //===================================================================================================================================================
 //	Вспомогательные методы класса

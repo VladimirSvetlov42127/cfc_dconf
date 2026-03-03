@@ -33,7 +33,6 @@ public:
 	//===============================================================================================================================================
     CfcReturnDelay(QString id = QString(), QSizeF node_size = QSizeF(), QGraphicsItem* parent = nullptr);
     CfcReturnDelay(QDomNode xml, QGraphicsItem* parent = nullptr);
-    CfcReturnDelay(MemoryNode node, QGraphicsItem* parent = nullptr);
 
 protected:
 	//===============================================================================================================================================

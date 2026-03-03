@@ -56,19 +56,6 @@ CfcLink::CfcLink(QDomNode xml) : CfcBasicLink(xml)
     _menu.addAction("Убрать лишние узлы", this, &CfcLink::removeNodes);
 }
 
-CfcLink::CfcLink(MemoryLink memory) : CfcBasicLink(QString(), memory.points)
-{
-    //  Свойства класса
-    _sorting_line = nullptr;
-    _is_moving = false;
-    _path = QPainterPath();
-
-    //  Инициализация меню
-    _menu_point = QPointF();
-    _menu.addAction("Добавить узел", this, &CfcLink::linkAddNode);
-    _menu.addAction("Убрать лишние узлы", this, &CfcLink::removeNodes);
-}
-
 
 //===================================================================================================================================================
 //	Перегружаемые методы класса

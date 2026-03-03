@@ -33,7 +33,6 @@ public:
 	//===============================================================================================================================================
     CfcRsTrigger(QString id = QString(), QSizeF node_size = QSizeF(), QGraphicsItem* parent = nullptr);
     CfcRsTrigger(QDomNode xml, QGraphicsItem* parent = nullptr);
-    CfcRsTrigger(MemoryNode node, QGraphicsItem* parent = nullptr);
 
 protected:
 	//===============================================================================================================================================

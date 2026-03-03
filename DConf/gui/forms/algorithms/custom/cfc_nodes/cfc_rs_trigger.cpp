@@ -49,20 +49,6 @@ CfcRsTrigger::CfcRsTrigger(QDomNode xml, QGraphicsItem* parent) : CfcNode(xml, p
     initInputs(2, 2);
 }
 
-CfcRsTrigger::CfcRsTrigger(MemoryNode node, QGraphicsItem* parent) : CfcNode(QString(), parent)
-{
-    //  Настройка параметров
-    setName("RsTrigger");
-    setNodeType(RZA_TRIGGER);
-    setSize(node.size);
-    setInversion(false);
-    initInputs(2, 2);
-
-    setOutput();
-    addInput();
-    addInput();
-}
-
 
 //===================================================================================================================================================
 //	Вспомогательные методы класса

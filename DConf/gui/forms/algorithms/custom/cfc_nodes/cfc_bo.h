@@ -34,7 +34,6 @@ public:
 	//===============================================================================================================================================
     CfcBO(QString id = QString(), QSizeF node_size = QSizeF(), QGraphicsItem* parent = nullptr);
     CfcBO(QDomNode xml, QGraphicsItem* parent = nullptr);
-    CfcBO(MemoryNode node, QGraphicsItem* parent = nullptr);
 
     //===============================================================================================================================================
     //	Открытые методы класса

@@ -4,8 +4,7 @@
 //===================================================================================================================================================
 //	Подключение модулей проекта
 //===================================================================================================================================================
-#include "gui/forms/algorithms/custom/cfc_nodes/cfc_bi.h"
-#include "gui/forms/algorithms/custom/cfc_nodes/cfc_bo.h"
+#include <gui/forms/algorithms/custom/cfc_nodes/cfc_nodes_list.h>
 
 
 //===================================================================================================================================================
@@ -21,6 +20,8 @@ namespace {
 //===================================================================================================================================================
 CfcBasicScene::CfcBasicScene(uint16_t id, ServiceManager* service_manager, const QString& title, QGraphicsScene* parent) : QGraphicsScene(parent)
 {
+    _menu_point = QPointF();
+    _basic_point = QPointF();
     _grid_enable = true;
     _service_manager = service_manager;
     _cfc_service = _service_manager->CfcAlg(id);
@@ -40,6 +41,46 @@ CfcBasicScene::CfcBasicScene(uint16_t id, ServiceManager* service_manager, const
 //===================================================================================================================================================
 //	Открытые методы класса
 //===================================================================================================================================================
+CfcNode* CfcBasicScene::newEditorNode(QString name)
+{
+    if (name == "And")
+        return new CfcAnd();
+    if (name == "Generator")
+        return new CfcGenerator();
+    if (name == "ImpulsePF")
+        return new CfcImpulsePF();
+    if (name == "ImpulseZF")
+        return new CfcImpulseZF();
+    if (name == "Not")
+        return new CfcNot();
+    if (name == "Or")
+        return new CfcOr();
+    if (name == "ReturnDelay")
+        return new CfcReturnDelay();
+    if (name == "RsTrigger")
+        return new CfcRsTrigger();
+    if (name == "TriggerDelay")
+        return new CfcTriggerDelay();
+    if (name == "Xor")
+        return new CfcXor();
+
+    if (name == "BI") {
+        CfcBI* node = new CfcBI();
+        CfcServiceInput* input = cfcService()->makeInput(serviceManager()->nextCfcID(), cfcService()->freePin());
+        node->setCfcInput(input);
+        return node;
+    }
+
+    if (name == "BO") {
+        CfcBO* node = new CfcBO();
+        CfcServiceOutput* output = cfcService()->makeOutput(serviceManager()->nextCfcID(), cfcService()->freePin());
+        node->setCfcOutput(output);
+        return node;
+    }
+
+    return nullptr;
+}
+
 QList<CfcNode*> CfcBasicScene::nodes() const
 {
     QList<CfcNode*> list;
@@ -185,6 +226,7 @@ bool CfcBasicScene::validate(QList<CfcNode*> nodes, QList<CfcLink*> links)
     return error;
 }
 
+
 //===================================================================================================================================================
 //	Методы обработки сигналов сцены
 //===================================================================================================================================================
@@ -205,19 +247,38 @@ void CfcBasicScene::removeSelected()
 
 void CfcBasicScene::copySelected()
 {
+    QList<CfcNode*> nodes = selectedNodes();
+    for (int i = 0; i < nodes.count(); i++) {
+        CfcNode* node = copyNode(nodes.at(i));
+        _buffer_nodes.append(node);
+    }
+
+    _basic_point = menuPoint();
+
     return;
 }
 
 void CfcBasicScene::pasteSelected()
 {
+    QPointF delta = menuPoint() - _basic_point;
+
+    //  Вывод узлов
+    for (int i = 0; i < _buffer_nodes.count(); i++) {
+        CfcNode* node = _buffer_nodes.at(i);
+        node->setPos(node->pos() + delta);
+        addItem(node);
+    }
+    _buffer_nodes.clear();
+
     return;
 }
 
 void CfcBasicScene::cutSelected()
 {
+    copySelected();
+    removeSelected();
     return;
 }
-
 
 
 //===================================================================================================================================================
@@ -351,6 +412,34 @@ void CfcBasicScene::removeNode(CfcNode* node)
 
     return;
 }
+
+CfcNode* CfcBasicScene::copyNode(CfcNode* source)
+{
+    CfcNode* node = newEditorNode(source->name());
+    if (!node)
+        return nullptr;
+
+    //  Основные параметры
+    node->setSize(source->size());
+    node->setPos(source->pos());
+
+    //  Обработка BI/BO
+    if (node->name() == "BI" || node->name() == "BO") {
+        node->setParam("signal", -1);
+        return node;
+    }
+
+    //  Добавление входов
+    if (source->inputs() != node->inputs())
+        node->setInputs(source->inputs());
+
+    //  Обновление параметров
+    for (int i = 0; i < source->paramsList().count(); i++)
+        node->setParam(source->paramsList().at(i).index, source->paramsList().at(i).value);
+
+    return node;
+}
+
 
 
 

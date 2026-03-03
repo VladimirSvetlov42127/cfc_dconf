@@ -68,22 +68,6 @@ CfcBI::CfcBI(QDomNode xml, QGraphicsItem* parent) : CfcNode(xml, parent)
         setParam(paramNames().at(i), paramValues().at(i));
 }
 
-CfcBI::CfcBI(MemoryNode node, QGraphicsItem* parent) : CfcNode(QString(), parent)
-{
-    //  Настройка параметров
-    setName("BI");
-    setNodeType(RZA_LOAD);
-    setSize(node.size);
-    setInversion(false);
-    initInputs(0, 0);
-
-    addParam("Название", "name", QString());
-    addParam("Сигнал", "signal", -1);
-    addParam("io_id", "io_id", -1);
-    addParam("AlgPin", "alg_pin", -1);
-    setOutput();
-}
-
 
 //===================================================================================================================================================
 //	Виртуальные методы класса

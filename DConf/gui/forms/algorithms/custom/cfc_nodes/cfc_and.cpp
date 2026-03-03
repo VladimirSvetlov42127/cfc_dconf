@@ -47,17 +47,6 @@ CfcAnd::CfcAnd(QDomNode xml, QGraphicsItem* parent) : CfcNode(xml, parent)
     initInputs(2, 16);
 }
 
-CfcAnd::CfcAnd(MemoryNode node, QGraphicsItem* parent) : CfcNode(QString(), parent)
-{
-    setName("And");
-    setNodeType(RZA_AND);
-    setSize(node.size);
-    setInversion(false);
-    initInputs(2, 16);
-    for (int i = 0; i < node.sockets.count(); i++)
-        node.sockets.at(i) == CfcSocket::OUTPUT_SOCKET ? setOutput() : addInput();
-}
-
 
 //===================================================================================================================================================
 //	Перегружаемые методы класса

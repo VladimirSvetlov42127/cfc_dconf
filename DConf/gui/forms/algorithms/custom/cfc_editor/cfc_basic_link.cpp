@@ -318,15 +318,6 @@ QDomNode CfcBasicLink::toXML() const
     return xml_link;
 }
 
-MemoryLink CfcBasicLink::toMemory() const
-{
-    MemoryLink memory_link;
-    // for (int i = 0; i < points().count(); i++)
-    //     memory_link.points.append(points().at(i));
-
-    return memory_link;
-}
-
 
 //===================================================================================================================================================
 //	Вспомогательные методы класса
