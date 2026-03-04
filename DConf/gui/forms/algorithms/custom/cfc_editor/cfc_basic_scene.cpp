@@ -268,32 +268,6 @@ void CfcBasicScene::copySelected()
         if (!link->source()->parent()->isSelected() || !link->target()->parent()->isSelected())
             continue;
         CfcLink* link_copy = new CfcLink(QString(), link->points());
-    //    link_copy->setPos(link->pos());
-    //     QString source_id = QString::number(link->sourceID().toInt() + last_id);
-    //     QString target_id = QString::number(link->targetID().toInt() + last_id);
-    //     int source_index = link->source()->index();
-    //     int target_index = link->target()->index();
-
-    //     qDebug() << source_id << target_id << source_index << target_index;
-
-    //     for (int ii = 0; ii < _buffer_nodes.count(); ii++) {
-    //         CfcNode* node = _buffer_nodes.at(ii);
-    //         if (link_copy->source() && link->target())
-    //             break;
-    //         QString node_id = node->id();
-    //         if (node_id != source_id && node_id != target_id)
-    //             continue;
-    //         if (node_id == source_id) {
-    //             CfcSocket* socket = node->sockets().at(source_index);
-    //             socket->appendLink(link_copy);
-    //             link_copy->setSource(socket);
-    //         }
-    //         if (node_id == target_id) {
-    //             CfcSocket* socket = node->sockets().at(target_index);
-    //             socket->appendLink(link_copy);
-    //             link_copy->setTarget(socket);
-    //         }
-    //     }
         _buffer_links.append(link_copy);
     }
 
@@ -560,14 +534,23 @@ CfcNode* CfcBasicScene::copyNode(CfcNode* source)
         node->setParam(source->paramsList().at(i).index, source->paramsList().at(i).value);
 
     //  Основные параметры
-    if (node->name() != "BI" && node->name() != "BO")
+    if (node->name() != "BI" && node->name() != "BO") {
         node->setSize(source->size());
-    node->setPos(source->pos());
+        node->setPos(source->pos());
+    }
 
     //  Обработка BI/BO
-    if (node->name() == "BI" || node->name() == "BO") {
+    if (node->name() == "BI") {
         node->setParam("signal", -1);
         node->setParam("name", QString());
+        QPointF position = source->pos();
+        position.setX(position.x() - (node->size().width() - source->size().width()));
+        node->setPos(position);
+    }
+    if (node->name() == "BO") {
+        node->setParam("signal", -1);
+        node->setParam("name", QString());
+        node->setPos(source->pos());
     }
 
     return node;
