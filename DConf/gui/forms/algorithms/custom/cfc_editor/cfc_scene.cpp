@@ -208,7 +208,8 @@ void CfcScene::mousePressEvent(QGraphicsSceneMouseEvent* event)
     //  Вывод меню изменения связи
     QPointF position = QPointF(event->scenePos().x(), event->scenePos().y());
     CfcLink* link = dynamic_cast<CfcLink*>(itemAt(position, QTransform()));
-    CfcTitle* title = dynamic_cast<CfcTitle*>(itemAt(position, QTransform()));
+    //CfcTitle* title = dynamic_cast<CfcTitle*>(itemAt(position, QTransform()));
+    TitleItem* title = dynamic_cast<TitleItem*>(itemAt(position, QTransform()));
     if (link && event->button() == Qt::RightButton) {
         link->mousePressEvent(event);
         event->accept();

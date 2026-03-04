@@ -121,6 +121,7 @@ HEADERS += \
     gui/forms/algorithms/custom/cfc_editor/cfc_scene.h \
     gui/forms/algorithms/custom/cfc_editor/cfc_socket.h \
     gui/forms/algorithms/custom/cfc_editor/cfc_title.h \
+    gui/forms/algorithms/custom/cfc_editor/title_item.h \
     gui/forms/algorithms/custom/cfc_nodes/cfc_and.h \
     gui/forms/algorithms/custom/cfc_nodes/cfc_bi.h \
     gui/forms/algorithms/custom/cfc_nodes/cfc_bo.h \
@@ -456,6 +457,7 @@ SOURCES += \
     gui/forms/algorithms/custom/cfc_editor/cfc_scene.cpp \
     gui/forms/algorithms/custom/cfc_editor/cfc_socket.cpp \
     gui/forms/algorithms/custom/cfc_editor/cfc_title.cpp \
+    gui/forms/algorithms/custom/cfc_editor/title_item.cpp \
     gui/forms/algorithms/custom/cfc_nodes/cfc_and.cpp \
     gui/forms/algorithms/custom/cfc_nodes/cfc_bi.cpp \
     gui/forms/algorithms/custom/cfc_nodes/cfc_bo.cpp \

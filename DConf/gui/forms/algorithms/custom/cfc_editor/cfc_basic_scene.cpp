@@ -36,9 +36,12 @@ CfcBasicScene::CfcBasicScene(uint16_t id, ServiceManager* service_manager, const
         _service_manager->appendCfcService(QString(), id, id);
 
     //  Вывод заголовка
-    _title_item = new CfcTitle(title);
+    // _title_item = new CfcTitle(title);
+    // addItem(_title_item);
+    // _title_item->setPos((sceneRect().width() + _title_item->width()) / 2 + 150, 0);
+    title == QString() ? _title_item = new TitleItem("Алгоритм гибкой логики") : _title_item = new TitleItem(title);
     addItem(_title_item);
-    _title_item->setPos((sceneRect().width() + _title_item->width()) / 2 + 150, 0);
+    _title_item->setPos((sceneRect().width() + _title_item->Width()) / 2, 0);
 
     setItemIndexMethod(QGraphicsScene::NoIndex);
     setBackgroundBrush(scene_bkcolor);
