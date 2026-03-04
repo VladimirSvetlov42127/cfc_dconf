@@ -20,9 +20,36 @@
 //===================================================================================================================================================
 //	Подключение модулей проекта
 //===================================================================================================================================================
-#include <gui/forms/algorithms/custom/flexlogic_namespace.h>
-#include <gui/forms/algorithms/custom/dep_parser.h>
+//#include "gui/forms/algorithms/custom/flexlogic_namespace.h"
+#include "gui/forms/algorithms/custom/cfc_tools/cfc_parser.h"
 #include "gui/forms/algorithms/custom/cfc_tools/byte_code.h"
+#include "gui/forms/algorithms/custom/cfc_editor/cfc_node.h"
+#include "gui/forms/algorithms/custom/cfc_editor/cfc_link.h"
+
+//===============================================================================================================================================
+//	Структуры данных класса
+//===============================================================================================================================================
+enum VariableType : uint8_t {
+    VARIABLE_DISCRETE = 0,
+    VARIABLE_ANALOG = 1,
+    VARIABLE_INT32 = 2
+};
+
+struct CompileLink {
+    QString socket_id;
+    QStringList links_list;
+    uint8_t type = 0;
+    bool inversion = false;
+    int pin_number = -1;
+    int16_t link_number = -1;
+};
+
+struct CompileElement {
+    uint8_t type = 0;               //  Тип узла
+    QList<int32_t> params;          //  Список значений параметров
+    QList<CompileLink> inputs;      //  Список входов
+    QList<CompileLink> outputs;     //  Список выходов
+};
 
 
 //===================================================================================================================================================
@@ -33,16 +60,21 @@ class CfcCompiler : public QObject
 	Q_OBJECT
 
 public:
-	//===============================================================================================================================================
+    //===============================================================================================================================================
 	//	Конструктор и деструктор класса
 	//===============================================================================================================================================
 	CfcCompiler(QObject* parent = nullptr);
 	~CfcCompiler();
 
+    //	Правило пяти
+    CfcCompiler(const CfcCompiler& other) = delete;
+    CfcCompiler(CfcCompiler&& other) = delete;
+    CfcCompiler& operator=(const CfcCompiler& other) = delete;
+    CfcCompiler& operator=(CfcCompiler&& other) = delete;
+
 	//===============================================================================================================================================
 	//	Методы работы со свойствами класса
 	//===============================================================================================================================================
-	DepCfcParser* parser() { return _parser; }
 	ByteCode* byteCode() { return _byte_code; }
 
 	//===============================================================================================================================================
@@ -54,29 +86,21 @@ private:
 	//===============================================================================================================================================
 	//	Вспомогательные методы класса
 	//===============================================================================================================================================
-	QList<FlexLogic::CompileElement> getNodes(QList<EditorNode*> nodes);
-	bool setLinks(QList<EditorLink*> links, QList<FlexLogic::CompileElement>& nodes_list);
-
+    QList<CompileElement> getNodes(QList<CfcNode*> nodes);
+    bool setLinks(QList<CfcLink*> links, QList<CompileElement>& nodes_list);
 
 	//===============================================================================================================================================
 	//	Методы работы с байт-кодом
 	//===============================================================================================================================================
-	bool createByteCode(QList<FlexLogic::CompileElement>& nodes_list);
+    bool createByteCode(QList<CompileElement>& nodes_list);
 	void createHeader(uint32_t ramsize, QString title);
-	uint32_t maxVarsSize(QList<FlexLogic::CompileElement>& nodes_list);
-	uint32_t totalConnections(QList<FlexLogic::CompileElement>& nodes_list);
-	void createNode(const FlexLogic::CompileElement& node);
+    uint32_t maxVarsSize(QList<CompileElement>& nodes_list);
+    uint32_t totalConnections(QList<CompileElement>& nodes_list);
+    void createNode(const CompileElement& node);
 	int setNodeType(uint8_t type);
 	int setNodeParams(const QList<int32_t>& params);
-	int setNodeIO(const QList<FlexLogic::CompileLink> channel, bool channel_type);
+    int setNodeIO(const QList<CompileLink> channel, bool channel_type);
 	uint32_t getCRC(ByteCode* byte_code, uint32_t init);
-
-private slots:
-	//===============================================================================================================================================
-	//	Обработка сигналов парсера
-	//===============================================================================================================================================
-	void onParserError(const QString& message);
-	void onParserInfo(const QString& message);
 
 signals:
 	//===============================================================================================================================================
@@ -89,7 +113,6 @@ private:
 	//===============================================================================================================================================
 	//	Свойства класса
 	//===============================================================================================================================================
-	DepCfcParser* _parser;
 	ByteCode* _byte_code;
 	QString _title;
 };

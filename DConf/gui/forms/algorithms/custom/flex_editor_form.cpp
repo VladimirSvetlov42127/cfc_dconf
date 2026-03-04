@@ -51,11 +51,6 @@ flexEditorForm::flexEditorForm(DcController* device, DcAlgCfc* alg, QWidget* par
     if (_cfc_service == nullptr)
         _cfc_service = device->serviceManager()->appendCfcService(alg->name(), idx, idx);
 
-    //	Создание и yастройка парсера
-    // _parser = new DepCfcParser();
-    // connect(_parser, &DepCfcParser::errorToLog, this, [=](const QString& mess) { gJournal.addErrorMessage(mess, JSource::make(device)); });
-    // connect(_parser, &DepCfcParser::infoToLog, this, [=](const QString& mess)  { gJournal.addInfoMessage(mess, JSource::make(device)); });
-
     //	Установка цветовой палитры
     QPalette palette = qApp->palette();
     QColor color = palette.color(QPalette::Highlight);
@@ -93,9 +88,6 @@ flexEditorForm::flexEditorForm(DcController* device, DcAlgCfc* alg, QWidget* par
     graphView()->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     graphView()->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     graphView()->setContentsMargins(5, 5, 5, 5);
-
-	//	Привязка к сигналам сцены
-    // connect(Scene(), &EditorScene::DataChanged, this, &flexEditorForm::DataChange);
 
 	//	Формирование виджетов окна
     createTreeView();

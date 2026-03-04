@@ -19,6 +19,8 @@
 //===================================================================================================================================================
 //	Подключение модулей проекта
 //===================================================================================================================================================
+#include "gui/forms/algorithms/custom/cfc_editor/cfc_socket.h"
+
 
 //===================================================================================================================================================
 //	Списки данных проекта
@@ -49,20 +51,16 @@ namespace {
 //===================================================================================================================================================
 //	Конструктор и деструктор класса
 //===================================================================================================================================================
-CfcCompiler::CfcCompiler(QObject* parent)
+CfcCompiler::CfcCompiler(QObject* parent) : QObject(parent)
 {
 	//	Свойства класса
 	_title = QString("first");
 	_byte_code = new ByteCode();
-	_parser = new DepCfcParser();
-	connect(_parser, &DepCfcParser::errorToLog, this, &CfcCompiler::onParserError);
-	connect(_parser, &DepCfcParser::infoToLog, this, &CfcCompiler::onParserInfo);
 }
 
 CfcCompiler::~CfcCompiler()
 {
 	delete _byte_code;
-	delete _parser;
 }
 
 
@@ -82,23 +80,20 @@ bool CfcCompiler::compile(const QString& file_name)
 	if (QFile::exists(bin_name)) QFile::remove(bin_name);
 
 	//	Чтение и обработка графического файла
+    CfcParser parser = CfcParser();
 	emit infoToLog("Чтение и обработка алгоритма гибкой логики. Файл: " + file_name);
-	if (!parser()->loadFile(file_name)) {
+    if (!parser.loadData(file_name)) {
 		emit errorToLog("Ошибка файла алгоритма гибкой логики");
 		return false; }
 
-	//	Проверка алгоритма гибкой логики
-	emit infoToLog("Файл " + file_name + " прочитан успешно.");
-	if (!parser()->validate()) return false;
-
 	//	Генерация списка элементов
-	QList<FlexLogic::CompileElement> nodes_list = getNodes(parser()->editorNodes());
+    QList<CompileElement> nodes_list = getNodes(parser.nodes());
 	if (nodes_list.isEmpty()) {
 		emit errorToLog("Ошибка получения списка элементов алгоритма гибкой логики.");
 		return false; }
 
 	//	Генерация связей между элементами
-	if (!setLinks(parser()->editorLinks(), nodes_list)) {
+    if (!setLinks(parser.links(), nodes_list)) {
 		emit errorToLog("Ошибка генерации связей между элементами.");
 		return false; }
 
@@ -131,31 +126,33 @@ bool CfcCompiler::compile(const QString& file_name)
 //===================================================================================================================================================
 //	Вспомогательные методы класса
 //===================================================================================================================================================
-QList<FlexLogic::CompileElement> CfcCompiler::getNodes(QList<EditorNode*> nodes)
+QList<CompileElement> CfcCompiler::getNodes(QList<CfcNode*> nodes)
 {
-	QList<FlexLogic::CompileElement> list;
+    QList<CompileElement> list;
 	bool input_exist = false;
 	bool output_exist = false;
-	FlexLogic::CompileElement input_node, output_node;
+    CompileElement input_node, output_node;
 
 	//	Создание входного элемента
-	for (int i = 0; i < nodes.count(); i++) {
+    for (int i = 0; i < nodes.count(); i++) {
         if (nodes.at(i)->name() != "BI")
             continue;
 		//	Создание элемента
 		if (!input_exist) {
-			input_node.type = FlexLogic::RZA_READ;
+            input_node.type = RZA_READ;
             for (int ii = 0; ii < 3; ii++)
                 input_node.params.append(0);
             input_exist = true;
         }
-	
+
 		//	Добавление выходов
-		for (int ii = 0; ii < nodes.at(i)->SocketsCount(); ii++) {
-			FlexLogic::CompileLink link;
-			link.socket_id = nodes.at(i)->Sockets().at(ii)->ID();
-			link.links_list = nodes.at(i)->Sockets().at(ii)->SocketLinks();
-			link.type = FlexLogic::VARIABLE_DISCRETE;
+        for (int ii = 0; ii < nodes.at(i)->sockets().count(); ii++) {
+            CompileLink link;
+            link.socket_id = nodes.at(i)->sockets().at(ii)->id();
+            for (int k = 0; k < nodes.at(i)->sockets().at(ii)->links().count(); k++)
+                link.links_list.append(nodes.at(i)->sockets().at(ii)->links().at(k)->id());
+
+            link.type = VARIABLE_DISCRETE;
 			link.inversion = false;
             link.pin_number = nodes.at(i)->param("alg_pin").value.toInt();
 			link.link_number = -1;
@@ -166,26 +163,31 @@ QList<FlexLogic::CompileElement> CfcCompiler::getNodes(QList<EditorNode*> nodes)
 
 	//	Заполнение списка стандартных элементов
 	for (int i = 0; i < nodes.count(); i++) {
-        EditorNode* node = nodes.at(i);
-        if (node->nodeType() == FlexLogic::RZA_LOAD)
+        CfcNode* node = nodes.at(i);
+        if (node->nodeType() == RZA_LOAD)
             continue;
-        FlexLogic::CompileElement compile_node;
+        CompileElement compile_node;
         compile_node.type = node->nodeType();
         for (int ii = 0; ii < 3; ii++)
             compile_node.params.append(0);
         for (int ii = 0; ii < node->paramsList().count(); ii++)
             compile_node.params[ii] = node->paramsList().at(ii).value.toInt();
-        for (int ii = 0; ii < node->SocketsCount(); ii++) {
-			FlexLogic::CompileLink link;
-			link.type = FlexLogic::VARIABLE_DISCRETE;
-            link.socket_id = node->Sockets().at(ii)->ID();
-            link.links_list = node->Sockets().at(ii)->SocketLinks();
-			link.inversion = false;
+
+        for (int ii = 0; ii < node->sockets().count(); ii++) {
+            CompileLink link;
+
+            link.type = VARIABLE_DISCRETE;
+            link.socket_id = node->sockets().at(ii)->id();
+            for (int k = 0; k < nodes.at(i)->sockets().at(ii)->links().count(); k++)
+                link.links_list.append(nodes.at(i)->sockets().at(ii)->links().at(k)->id());
+
+            link.inversion = false;
 			link.pin_number = ii + 1;
 			link.link_number = -1;
-            if (node->Sockets().at(ii)->SocketType() == FlexLogic::SocketType::OUTPUT_SOCKET)
+
+            if (node->sockets().at(ii)->socketType() == CfcSocket::OUTPUT_SOCKET)
                 compile_node.outputs.append(link);
-            if (node->Sockets().at(ii)->SocketType() == FlexLogic::SocketType::INPUT_SOCKET)
+            if (node->sockets().at(ii)->socketType() == CfcSocket::INPUT_SOCKET)
                 compile_node.inputs.append(link);
         }
         list.append(compile_node);
@@ -196,41 +198,42 @@ QList<FlexLogic::CompileElement> CfcCompiler::getNodes(QList<EditorNode*> nodes)
         if (nodes.at(i)->name() != "BO") continue;
 		//	Создание элемента
 		if (!output_exist) {
-			output_node.type = FlexLogic::RZA_WRITE;
+            output_node.type = RZA_WRITE;
             for (int ii = 0; ii < 3; ii++)
                 output_node.params.append(0);
             output_exist = true;
         }
 
 		//	Добавление входов
-		for (int ii = 0; ii < nodes.at(i)->SocketsCount(); ii++) {
-			FlexLogic::CompileLink link;
-			link.socket_id = nodes.at(i)->Sockets().at(ii)->ID();
-			link.links_list = nodes.at(i)->Sockets().at(ii)->SocketLinks();
-			link.type = FlexLogic::VARIABLE_DISCRETE;
+        for (int ii = 0; ii < nodes.at(i)->sockets().count(); ii++) {
+            CompileLink link;
+            link.socket_id = nodes.at(i)->sockets().at(ii)->id();
+            for (int k = 0; k < nodes.at(i)->sockets().at(ii)->links().count(); k++)
+                link.links_list.append(nodes.at(i)->sockets().at(ii)->links().at(k)->id());
+
+            link.type = VARIABLE_DISCRETE;
 			link.inversion = false;
             link.pin_number = nodes.at(i)->param("alg_pin").value.toInt();
 			link.link_number = -1;
             output_node.inputs.append(link);
         }
 	}
-	list.append(output_node);
+    list.append(output_node);
 
 	//	Сортировка входов и выходов элементов по номерам пинов
 	for (int i = 0; i < list.count(); i++) {
 		std::sort(list[i].inputs.begin(), list[i].inputs.end(),
-			[](const FlexLogic::CompileLink& a, const FlexLogic::CompileLink& b) {
+            [](const CompileLink& a, const CompileLink& b) {
 				return a.pin_number < b.pin_number;	});
 		std::sort(list[i].outputs.begin(), list[i].outputs.end(),
-			[](const FlexLogic::CompileLink& a, const FlexLogic::CompileLink& b) {
+            [](const CompileLink& a, const CompileLink& b) {
 				return a.pin_number < b.pin_number;	});
 	}
 
-
-	return list;
+    return list;
 }
 
-bool CfcCompiler::setLinks(QList<EditorLink*> links, QList<FlexLogic::CompileElement>& nodes_list)
+bool CfcCompiler::setLinks(QList<CfcLink*> links, QList<CompileElement>& nodes_list)
 {
 	//	Инициализация переменных
 	int default_num = -1;
@@ -245,16 +248,16 @@ bool CfcCompiler::setLinks(QList<EditorLink*> links, QList<FlexLogic::CompileEle
                 nodes_list[i].outputs[ii].link_number = set_num;
             } else set_num = nodes_list.at(i).outputs.at(ii).link_number;
 
-			//	Цикл по линкам
+            //	Цикл по линкам
 			for (int lnk = 0; lnk < nodes_list.at(i).outputs.at(ii).links_list.count(); lnk++) {
 				QString link_id = nodes_list.at(i).outputs.at(ii).links_list.at(lnk);
 				QString target_id = QString();
 
 				//	Получение id сокета цели
 				for (int nn = 0; nn < links.count(); nn++) {
-                    if (links.at(nn)->ID() != link_id)
+                    if (links.at(nn)->id() != link_id)
                         continue;
-					target_id = links.at(nn)->TargetID();
+                    target_id = links.at(nn)->target()->id();
                     break;
                 }
 				if (target_id == QString()) { 
@@ -273,20 +276,22 @@ bool CfcCompiler::setLinks(QList<EditorLink*> links, QList<FlexLogic::CompileEle
                         break;
                     }
 				}
-                if (to_node < 0 || to_pin < 0)
+                if (to_node < 0 || to_pin < 0) {
+                    emit errorToLog("Не найден узел или сокет цели.");
                     return false;
+                }
 				nodes_list[to_node].inputs[to_pin].link_number = set_num; }
 		}
 	}
 
-	return true;
+    return true;
 }
 
 
 //===================================================================================================================================================
 //	Методы работы с байт-кодом
 //===================================================================================================================================================
-bool CfcCompiler::createByteCode(QList<FlexLogic::CompileElement>& nodes_list)
+bool CfcCompiler::createByteCode(QList<CompileElement>& nodes_list)
 {
 	//	Получение необходимых размеров
 	uint16_t max_vars_size = maxVarsSize(nodes_list);
@@ -315,7 +320,8 @@ bool CfcCompiler::createByteCode(QList<FlexLogic::CompileElement>& nodes_list)
 	byteCode()->append(uint8_t(nodes_list.count()));
 
 	//	Добавление элементов схемы
-	for (int i = 0; i < nodes_list.count(); i++) createNode(nodes_list.at(i));
+    for (int i = 0; i < nodes_list.count(); i++)
+        createNode(nodes_list.at(i));
 
 	//	Обновление размера файла
     byteCode()->setData(FILE_SIZE_POSITION, uint32_t(byteCode()->size() + 4));
@@ -390,7 +396,7 @@ void CfcCompiler::createHeader(uint32_t ramsize, QString title)
 	return;
 }
 
-uint32_t CfcCompiler::maxVarsSize(QList<FlexLogic::CompileElement>& nodes_list)
+uint32_t CfcCompiler::maxVarsSize(QList<CompileElement>& nodes_list)
 {
 	int max_vars_size = 0;
 	int pn;
@@ -408,7 +414,7 @@ uint32_t CfcCompiler::maxVarsSize(QList<FlexLogic::CompileElement>& nodes_list)
 	return max_vars_size + 1;
 }
 
-uint32_t CfcCompiler::totalConnections(QList<FlexLogic::CompileElement>& nodes_list)
+uint32_t CfcCompiler::totalConnections(QList<CompileElement>& nodes_list)
 {
 	uint32_t total_connections = 0;
 	for (int i = 0; i < nodes_list.count(); i++) {
@@ -420,7 +426,7 @@ uint32_t CfcCompiler::totalConnections(QList<FlexLogic::CompileElement>& nodes_l
 	return total_connections;
 }
 
-void CfcCompiler::createNode(const FlexLogic::CompileElement& node)
+void CfcCompiler::createNode(const CompileElement& node)
 {
 	byteCode()->append(NODE_TAG);
     uint16_t node_length_position = byteCode()->size();
@@ -469,7 +475,7 @@ int CfcCompiler::setNodeParams(const QList<int32_t>& params)
 	return param_length;
 }
 
-int CfcCompiler::setNodeIO(const QList<FlexLogic::CompileLink> channel, bool channel_type)
+int CfcCompiler::setNodeIO(const QList<CompileLink> channel, bool channel_type)
 {
 	channel_type ? byteCode()->append(NODE_OUTPUT_TAG) : byteCode()->append(NODE_INPUT_TAG);
 	uint16_t channel_length = 0;
@@ -501,7 +507,6 @@ int CfcCompiler::setNodeIO(const QList<FlexLogic::CompileLink> channel, bool cha
         byteCode()->append(uint8_t(channel.at(i).inversion));
     }
 
-
     channel_length = byteCode()->size() - channel_length_position - 3;
 	byteCode()->setComplexLength(channel_length_position, channel_length);
 
@@ -524,16 +529,3 @@ uint32_t CfcCompiler::getCRC(ByteCode* byte_code, uint32_t init)
 	return crc;
 }
 
-
-//===================================================================================================================================================
-//	Обработка сигналов парсера
-//===================================================================================================================================================
-void CfcCompiler::onParserError(const QString& message)
-{
-	emit errorToLog(message);
-}
-
-void CfcCompiler::onParserInfo(const QString& message)
-{
-	emit infoToLog(message);
-}

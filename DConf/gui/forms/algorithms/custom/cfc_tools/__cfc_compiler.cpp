@@ -140,12 +140,15 @@ QList<FlexLogic::CompileElement> CfcCompiler::getNodes(QList<EditorNode*> nodes)
 
 	//	Создание входного элемента
 	for (int i = 0; i < nodes.count(); i++) {
-        if (nodes.at(i)->name() != "BI") continue;
+        if (nodes.at(i)->name() != "BI")
+            continue;
 		//	Создание элемента
 		if (!input_exist) {
 			input_node.type = FlexLogic::RZA_READ;
-			for (int ii = 0; ii < 3; ii++) input_node.params.append(0);
-			input_exist = true; }
+            for (int ii = 0; ii < 3; ii++)
+                input_node.params.append(0);
+            input_exist = true;
+        }
 	
 		//	Добавление выходов
 		for (int ii = 0; ii < nodes.at(i)->SocketsCount(); ii++) {
@@ -156,28 +159,37 @@ QList<FlexLogic::CompileElement> CfcCompiler::getNodes(QList<EditorNode*> nodes)
 			link.inversion = false;
             link.pin_number = nodes.at(i)->param("alg_pin").value.toInt();
 			link.link_number = -1;
-			input_node.outputs.append(link); }
+            input_node.outputs.append(link);
+        }
 	}
 	list.append(input_node);
 
 	//	Заполнение списка стандартных элементов
 	for (int i = 0; i < nodes.count(); i++) {
-        if (nodes.at(i)->nodeType() == FlexLogic::RZA_LOAD) continue;
-		FlexLogic::CompileElement node;
-        node.type = nodes.at(i)->nodeType();
-		for (int ii = 0; ii < 3; ii++) node.params.append(0);
-        for (int ii = 0; ii < nodes.at(i)->paramsList().count(); ii++) node.params[ii] = nodes.at(i)->paramsList().at(ii).value.toInt();
-		for (int ii = 0; ii < nodes.at(i)->SocketsCount(); ii++) {
+        EditorNode* node = nodes.at(i);
+        if (node->nodeType() == FlexLogic::RZA_LOAD)
+            continue;
+        FlexLogic::CompileElement compile_node;
+        compile_node.type = node->nodeType();
+        for (int ii = 0; ii < 3; ii++)
+            compile_node.params.append(0);
+        for (int ii = 0; ii < node->paramsList().count(); ii++)
+            compile_node.params[ii] = node->paramsList().at(ii).value.toInt();
+        for (int ii = 0; ii < node->SocketsCount(); ii++) {
 			FlexLogic::CompileLink link;
 			link.type = FlexLogic::VARIABLE_DISCRETE;
-			link.socket_id = nodes.at(i)->Sockets().at(ii)->ID();
-			link.links_list = nodes.at(i)->Sockets().at(ii)->SocketLinks();
+            link.socket_id = node->Sockets().at(ii)->ID();
+            link.links_list = node->Sockets().at(ii)->SocketLinks();
 			link.inversion = false;
 			link.pin_number = ii + 1;
 			link.link_number = -1;
-			if (nodes.at(i)->Sockets().at(ii)->SocketType() == FlexLogic::SocketType::OUTPUT_SOCKET) node.outputs.append(link);
-			if (nodes.at(i)->Sockets().at(ii)->SocketType() == FlexLogic::SocketType::INPUT_SOCKET) node.inputs.append(link); }
-		list.append(node); }
+            if (node->Sockets().at(ii)->SocketType() == FlexLogic::SocketType::OUTPUT_SOCKET)
+                compile_node.outputs.append(link);
+            if (node->Sockets().at(ii)->SocketType() == FlexLogic::SocketType::INPUT_SOCKET)
+                compile_node.inputs.append(link);
+        }
+        list.append(compile_node);
+    }
 
 	//	Создание выходного элемента
 	for (int i = 0; i < nodes.count(); i++) {
@@ -185,8 +197,10 @@ QList<FlexLogic::CompileElement> CfcCompiler::getNodes(QList<EditorNode*> nodes)
 		//	Создание элемента
 		if (!output_exist) {
 			output_node.type = FlexLogic::RZA_WRITE;
-			for (int ii = 0; ii < 3; ii++) output_node.params.append(0);
-			output_exist = true; }
+            for (int ii = 0; ii < 3; ii++)
+                output_node.params.append(0);
+            output_exist = true;
+        }
 
 		//	Добавление входов
 		for (int ii = 0; ii < nodes.at(i)->SocketsCount(); ii++) {
@@ -197,7 +211,8 @@ QList<FlexLogic::CompileElement> CfcCompiler::getNodes(QList<EditorNode*> nodes)
 			link.inversion = false;
             link.pin_number = nodes.at(i)->param("alg_pin").value.toInt();
 			link.link_number = -1;
-			output_node.inputs.append(link); }
+            output_node.inputs.append(link);
+        }
 	}
 	list.append(output_node);
 
@@ -227,8 +242,8 @@ bool CfcCompiler::setLinks(QList<EditorLink*> links, QList<FlexLogic::CompileEle
 			if (nodes_list.at(i).outputs.at(ii).link_number < 0) {
 				default_num++;
 				set_num = default_num;
-				nodes_list[i].outputs[ii].link_number = set_num; }
-			else set_num = nodes_list.at(i).outputs.at(ii).link_number;
+                nodes_list[i].outputs[ii].link_number = set_num;
+            } else set_num = nodes_list.at(i).outputs.at(ii).link_number;
 
 			//	Цикл по линкам
 			for (int lnk = 0; lnk < nodes_list.at(i).outputs.at(ii).links_list.count(); lnk++) {
@@ -237,23 +252,29 @@ bool CfcCompiler::setLinks(QList<EditorLink*> links, QList<FlexLogic::CompileEle
 
 				//	Получение id сокета цели
 				for (int nn = 0; nn < links.count(); nn++) {
-					if (links.at(nn)->ID() != link_id) continue;
+                    if (links.at(nn)->ID() != link_id)
+                        continue;
 					target_id = links.at(nn)->TargetID();
-					break;	}
+                    break;
+                }
 				if (target_id == QString()) { 
 					emit errorToLog("Ошибка получения id сокета цели.");
-					return false; }
+                    return false;
+                }
 
 				//	Поиск элемента с заданным сокетом
 				int to_node = -1, to_pin = -1;
 				for (int kk = 0; kk < nodes_list.count(); kk++) {
 					for (int kkk = 0; kkk < nodes_list.at(kk).inputs.count(); kkk++) {
-						if (nodes_list.at(kk).inputs.at(kkk).socket_id != target_id) continue;
+                        if (nodes_list.at(kk).inputs.at(kkk).socket_id != target_id)
+                            continue;
 						to_node = kk;
 						to_pin = kkk;
-						break; }
+                        break;
+                    }
 				}
-				if (to_node < 0 || to_pin < 0) return false;
+                if (to_node < 0 || to_pin < 0)
+                    return false;
 				nodes_list[to_node].inputs[to_pin].link_number = set_num; }
 		}
 	}
@@ -352,9 +373,11 @@ void CfcCompiler::createHeader(uint32_t ramsize, QString title)
 	byteCode()->append(priority);
 
 	//	Добавление названия схемы
-	if (title.size() > TITLE_SIZE) title = title.left(TITLE_SIZE);
-    for (int i = 0; i < title.size(); i++) byteCode()->append(title.toLocal8Bit().at(i));
-	for (int i = title.size(); i < TITLE_SIZE; i++) byteCode()->append(char(0x00));
+    if (title.size() > TITLE_SIZE) title = title.left(TITLE_SIZE);
+    for (int i = 0; i < title.size(); i++)
+        byteCode()->append(title.toLocal8Bit().at(i));
+    for (int i = title.size(); i < TITLE_SIZE; i++)
+        byteCode()->append(char(0x00));
 
 	//  Фиксация длины заголовка
     header_length = byteCode()->size() - header_length_position -4;
@@ -374,10 +397,12 @@ uint32_t CfcCompiler::maxVarsSize(QList<FlexLogic::CompileElement>& nodes_list)
 	for (int ind = 0; ind < nodes_list.count(); ind++) {
 		for (pn = 0; pn < nodes_list[ind].inputs.size(); pn++) {
 			if (nodes_list[ind].inputs[pn].link_number > max_vars_size)
-				max_vars_size = nodes_list[ind].inputs[pn].link_number; }
+                max_vars_size = nodes_list[ind].inputs[pn].link_number;
+        }
 		for (pn = 0; pn < nodes_list[ind].outputs.size(); pn++) {
 			if (nodes_list[ind].outputs[pn].link_number > max_vars_size)
-				max_vars_size = nodes_list[ind].outputs[pn].link_number; }
+                max_vars_size = nodes_list[ind].outputs[pn].link_number;
+        }
 	}
 
 	return max_vars_size + 1;
@@ -387,8 +412,10 @@ uint32_t CfcCompiler::totalConnections(QList<FlexLogic::CompileElement>& nodes_l
 {
 	uint32_t total_connections = 0;
 	for (int i = 0; i < nodes_list.count(); i++) {
-		for (int pn = 0; pn < nodes_list.at(i).inputs.size(); pn++) total_connections++;
-		for (int pn = 0; pn < nodes_list.at(i).outputs.size(); pn++) total_connections++; }
+        for (int pn = 0; pn < nodes_list.at(i).inputs.size(); pn++)
+            total_connections++;
+        for (int pn = 0; pn < nodes_list.at(i).outputs.size(); pn++)
+            total_connections++; }
 
 	return total_connections;
 }
@@ -412,11 +439,12 @@ void CfcCompiler::createNode(const FlexLogic::CompileElement& node)
 
 int CfcCompiler::setNodeType(uint8_t type)
 {
-	if (type == 0)	return 0;
+    if (type == 0)
+        return 0;
 
-	byteCode()->append(NODE_TYPE_TAG);
-	byteCode()->appendComplexLength(uint16_t(1));
-	byteCode()->append(type);
+    byteCode()->append(NODE_TYPE_TAG);
+    byteCode()->appendComplexLength(uint16_t(1));
+    byteCode()->append(type);
 
 	return 5;
 }
@@ -427,11 +455,13 @@ int CfcCompiler::setNodeParams(const QList<int32_t>& params)
 	uint16_t param_length = 0;
     uint16_t param_length_position = byteCode()->size();
 	byteCode()->appendComplexLength(param_length);
-	for (int i = 0; i < params.count(); i++) {
+
+    for (int i = 0; i < params.count(); i++) {
 		byteCode()->append(INTEGER_TAG);
 		byteCode()->append(0x04);
 		uint32_t param = params.at(i);
-		byteCode()->appendData(param); }
+        byteCode()->appendData(param);
+    }
 
     param_length = byteCode()->size() - param_length_position - 3;
 	byteCode()->setComplexLength(param_length_position, param_length);
@@ -468,7 +498,8 @@ int CfcCompiler::setNodeIO(const QList<FlexLogic::CompileLink> channel, bool cha
 
 		byteCode()->append(BOOL_TAG);
 		byteCode()->append(0x01);
-		byteCode()->append(uint8_t(channel.at(i).inversion)); }
+        byteCode()->append(uint8_t(channel.at(i).inversion));
+    }
 
 
     channel_length = byteCode()->size() - channel_length_position - 3;
@@ -486,7 +517,8 @@ uint32_t CfcCompiler::getCRC(ByteCode* byte_code, uint32_t init)
 		uint32_t ti = byte_code->at(ii);
 		ti = (crc ^ ti) & 0xFF;
 		for (int i = 0; i < 8; i++) ti = ti & 1 ? (ti >> 1) ^ 0xEDB88320UL : ti >> 1;
-		crc = ti ^ (crc >> 8); }
+        crc = ti ^ (crc >> 8);
+    }
 	crc ^= 0xFFFFFFFFUL;
 
 	return crc;

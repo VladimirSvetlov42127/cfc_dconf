@@ -22,7 +22,7 @@
 //===================================================================================================================================================
 #include <gui/forms/algorithms/custom/flexlogic_namespace.h>
 #include <gui/forms/algorithms/custom/dep_parser.h>
-#include <gui/forms/algorithms/custom/cfc_tools/byte_code.h>
+#include "gui/forms/algorithms/custom/cfc_tools/byte_code.h"
 
 
 //===================================================================================================================================================
