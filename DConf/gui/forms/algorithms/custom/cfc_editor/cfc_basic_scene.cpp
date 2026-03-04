@@ -9,7 +9,8 @@
 //===================================================================================================================================================
 //	Подключение модулей проекта
 //===================================================================================================================================================
-#include "gui/forms/algorithms/custom/cfc_nodes/cfc_nodes_list.h"
+#include <gui/forms/algorithms/custom/cfc_nodes/cfc_nodes_list.h>
+#include "gui/forms/algorithms/custom/cfc_editor/cfc_socket.h"
 
 
 //===================================================================================================================================================
@@ -17,6 +18,7 @@
 //===================================================================================================================================================
 namespace {
     QColor scene_bkcolor = QColor(255,255,255);
+    uint8_t select_shape = 10;
 }
 
 
@@ -252,10 +254,97 @@ void CfcBasicScene::removeSelected()
 
 void CfcBasicScene::copySelected()
 {
+    //  Копирование выделенных узлов
     QList<CfcNode*> nodes = selectedNodes();
     for (int i = 0; i < nodes.count(); i++) {
         CfcNode* node = copyNode(nodes.at(i));
         _buffer_nodes.append(node);
+    }
+
+    //  Копирование выделенных связей
+    QList<CfcLink*> links = selectedLinks();
+    for (int i = 0; i < links.count(); i++) {
+        CfcLink* link = links.at(i);
+        if (!link->source()->parent()->isSelected() || !link->target()->parent()->isSelected())
+            continue;
+        CfcLink* link_copy = new CfcLink(QString(), link->points());
+    //    link_copy->setPos(link->pos());
+    //     QString source_id = QString::number(link->sourceID().toInt() + last_id);
+    //     QString target_id = QString::number(link->targetID().toInt() + last_id);
+    //     int source_index = link->source()->index();
+    //     int target_index = link->target()->index();
+
+    //     qDebug() << source_id << target_id << source_index << target_index;
+
+    //     for (int ii = 0; ii < _buffer_nodes.count(); ii++) {
+    //         CfcNode* node = _buffer_nodes.at(ii);
+    //         if (link_copy->source() && link->target())
+    //             break;
+    //         QString node_id = node->id();
+    //         if (node_id != source_id && node_id != target_id)
+    //             continue;
+    //         if (node_id == source_id) {
+    //             CfcSocket* socket = node->sockets().at(source_index);
+    //             socket->appendLink(link_copy);
+    //             link_copy->setSource(socket);
+    //         }
+    //         if (node_id == target_id) {
+    //             CfcSocket* socket = node->sockets().at(target_index);
+    //             socket->appendLink(link_copy);
+    //             link_copy->setTarget(socket);
+    //         }
+    //     }
+        _buffer_links.append(link_copy);
+    }
+
+    //  Привязка источников связи
+    for (int i = 0; i < _buffer_links.count(); i++) {
+        CfcLink* link = _buffer_links.at(i);
+        bool found = false;
+        QPointF source_pos = link->points().at(0);
+        for (int ii = 0; ii < _buffer_nodes.count(); ii++) {
+            if (found)
+                break;
+            CfcNode* node = _buffer_nodes.at(ii);
+            for (int iii = 0; iii < node->sockets().count(); iii++) {
+                CfcSocket* socket = node->sockets().at(iii);
+                QPointF socket_pos = socket->scenePos();
+                QLineF check_line(source_pos, socket_pos);
+                if (check_line.length() > select_shape)
+                    continue;
+
+                //  Найден источник связи
+                socket->appendLink(link);
+                link->setSource(socket);
+                found = true;
+                break;
+            }
+        }
+    }
+
+    //  Привязка целей связи
+    for (int i = 0; i < _buffer_links.count(); i++) {
+        CfcLink* link = _buffer_links.at(i);
+        bool found = false;
+        QPointF target_pos = link->points().last();
+        for (int ii = 0; ii < _buffer_nodes.count(); ii++) {
+            if (found)
+                break;
+            CfcNode* node = _buffer_nodes.at(ii);
+            for (int iii = 0; iii < node->sockets().count(); iii++) {
+                CfcSocket* socket = node->sockets().at(iii);
+                QPointF socket_pos = socket->scenePos();
+                QLineF check_line(target_pos, socket_pos);
+                if (check_line.length() > select_shape)
+                    continue;
+
+                //  Найдена цель связи
+                socket->appendLink(link);
+                link->setTarget(socket);
+                found = true;
+                break;
+            }
+        }
     }
 
     _basic_point = menuPoint();
@@ -274,6 +363,18 @@ void CfcBasicScene::pasteSelected()
         addItem(node);
     }
     _buffer_nodes.clear();
+
+    //  Вывод связей
+    for (int i = 0; i < _buffer_links.count(); i++) {
+        CfcLink* link = _buffer_links.at(i);
+        QList<QPointF> cfc_points = link->points();
+        QList<QPointF> new_points;
+        for (int i = 0; i < cfc_points.count(); i++)
+            new_points.append(cfc_points.at(i) + delta);
+        link->setPoints(new_points);
+        addItem(link);
+    }
+    _buffer_links.clear();
 
     return;
 }
@@ -349,12 +450,14 @@ void CfcBasicScene::removeLink(CfcLink* link)
     QString source_id = link->sourceID();
     uint8_t source_index = link->sourceIndex();
     CfcNode* source_node =nodeByID(source_id);
-    source_node->sockets().at(source_index)->removeLink(link);
+    if (source_node->sockets().at(source_index))
+        source_node->sockets().at(source_index)->removeLink(link);
 
     //  Отвязывание сигнала
     if (source_node->name() == "BI"){
         CfcBI* bi_node = static_cast<CfcBI*>(source_node);
-        bi_node->cfcInput()->setSource(nullptr);
+        if (bi_node->cfcInput())
+            bi_node->cfcInput()->setSource(nullptr);
         bi_node->setParam("signal", -1);
         bi_node->setParam("name", QString());
     }
@@ -363,12 +466,14 @@ void CfcBasicScene::removeLink(CfcLink* link)
     QString target_id = link->targetID();
     uint8_t target_index = link->targetIndex();
     CfcNode* target_node =nodeByID(target_id);
-    target_node->sockets().at(target_index)->removeLink(link);
+    if (target_node->sockets().at(target_index))
+        target_node->sockets().at(target_index)->removeLink(link);
 
     //  Отвязывание сигнала
     if (target_node->name() == "BO"){
         CfcBO* bo_node = static_cast<CfcBO*>(target_node);
-        bo_node->cfcOutput()->setTarget(nullptr);
+        if (bo_node->cfcOutput())
+            bo_node->cfcOutput()->setTarget(nullptr);
         bo_node->setParam("signal", -1);
         bo_node->setParam("name", QString());
     }
@@ -446,16 +551,6 @@ CfcNode* CfcBasicScene::copyNode(CfcNode* source)
     if (!node)
         return nullptr;
 
-    //  Основные параметры
-    node->setSize(source->size());
-    node->setPos(source->pos());
-
-    //  Обработка BI/BO
-    if (node->name() == "BI" || node->name() == "BO") {
-        node->setParam("signal", -1);
-        return node;
-    }
-
     //  Добавление входов
     if (source->inputs() != node->inputs())
         node->setInputs(source->inputs());
@@ -463,6 +558,17 @@ CfcNode* CfcBasicScene::copyNode(CfcNode* source)
     //  Обновление параметров
     for (int i = 0; i < source->paramsList().count(); i++)
         node->setParam(source->paramsList().at(i).index, source->paramsList().at(i).value);
+
+    //  Основные параметры
+    if (node->name() != "BI" && node->name() != "BO")
+        node->setSize(source->size());
+    node->setPos(source->pos());
+
+    //  Обработка BI/BO
+    if (node->name() == "BI" || node->name() == "BO") {
+        node->setParam("signal", -1);
+        node->setParam("name", QString());
+    }
 
     return node;
 }

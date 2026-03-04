@@ -49,6 +49,7 @@ public:
     void noNeedUpdate() { _need_update = false; }
     bool isNeedUpdate() const { return _need_update; }
     QList<QPointF> points() const { return _points; };
+    void setPoints(const QList<QPointF>& points) { _points = points;};
 
     void setSource(CfcSocket* source);
     void setTarget(CfcSocket* target);
@@ -70,7 +71,6 @@ private:
     //===============================================================================================================================================
     //	Вспомогательные методы класса
     //===============================================================================================================================================
-    void setPoints(const QList<QPointF>& points) { _points = points;};
     bool isOnLine(const QPointF& begin, const QPointF& end, const QPointF& node);
     void arrangePoints(QList<QPointF> old_points);
 

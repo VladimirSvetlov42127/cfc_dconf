@@ -105,13 +105,15 @@ void CfcBO::paintElement(QPainter* painter)
     //  Вывод названия сигнала
     QString text = param("name").value.toString();
 
-    QFontMetrics fm(CHANNEL_TEXT_FONT);
-    QRectF text_rect(QPointF(rectangle.left() + 10, rectangle.top()), QPointF(rectangle.right() - rectangle.height(), rectangle.bottom()));
-    int text_width = fm.horizontalAdvance(text) + 40 + rectangle.height();
-    int old_width = size().width();
-    int delta_width = text_width - old_width;
-    if (abs(delta_width) > 10) setSize(QSizeF(text_width, size().height()));
-    painter->drawText(text_rect, Qt::AlignCenter, text);
+    if (!text.isEmpty()) {
+        QFontMetrics fm(CHANNEL_TEXT_FONT);
+        QRectF text_rect(QPointF(rectangle.left() + 10, rectangle.top()), QPointF(rectangle.right() - rectangle.height(), rectangle.bottom()));
+        int text_width = fm.horizontalAdvance(text) + 40 + rectangle.height();
+        int old_width = size().width();
+        int delta_width = text_width - old_width;
+        if (abs(delta_width) > 10) setSize(QSizeF(text_width, size().height()));
+        painter->drawText(text_rect, Qt::AlignCenter, text);
+    }
     update();
     painter->restore();
 
