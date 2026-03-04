@@ -67,15 +67,19 @@ void CfcTitle::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, 
 //===================================================================================================================================================
 void CfcTitle::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
+    qDebug() << "title event";
     //  Проверка области срабатывания мышки
-    if (!shape().contains(event->pos())) {
-        event->setAccepted(false);
-        return; }
+    // if (!shape().contains(event->scenePos())) {
+    //     event->setAccepted(false);
+    //     return; }
 
     //  Нажатие правой клавиши
+    qDebug() << "title event (2)";
     if (event->buttons() == Qt::RightButton)
         _menu.exec(event->screenPos());
-    QGraphicsItem::mousePressEvent(event);
+    // QGraphicsItem::mousePressEvent(event);
+    event->ignore();
+    return;
 
     return;
 }
