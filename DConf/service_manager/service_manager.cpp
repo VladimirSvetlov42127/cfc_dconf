@@ -12,7 +12,7 @@
 //===================================================================================================================================================
 #include "data_model/dc_controller.h"
 #include "service_manager/services/func/func_service.h"
-#include "gui/forms/algorithms/custom/dep_parser.h"
+#include "gui/forms/algorithms/custom/cfc_tools/cfc_parser.h"
 #include "gui/forms/algorithms/custom/cfc_tools/cfc_parser.h"
 #include "utils/bindings_update.h"
 #include "file_managers/DcFlexLogicFileManager.h"

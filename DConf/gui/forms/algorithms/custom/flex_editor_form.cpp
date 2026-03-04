@@ -24,11 +24,10 @@
 //===================================================================================================================================================
 //	Подключение модулей проекта
 //===================================================================================================================================================
-#include <file_managers/DcFlexLogicFileManager.h>
-#include <gui/forms/DcSignalManager.h>
-#include <gui/forms/algorithms/custom/flexlogic_namespace.h>
+#include "file_managers/DcFlexLogicFileManager.h"
 #include "gui/forms/algorithms/custom/cfc_tools/cfc_editor_model.h"
 #include "gui/forms/algorithms/custom/cfc_tools/cfc_parser.h"
+
 
 //===================================================================================================================================================
 //	Конструктор и деструктор класса

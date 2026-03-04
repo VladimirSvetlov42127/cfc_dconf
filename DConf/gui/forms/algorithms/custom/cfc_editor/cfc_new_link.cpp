@@ -7,11 +7,6 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 
-//===================================================================================================================================================
-//	Подключение модулей проекта
-//===================================================================================================================================================
-#include <gui/forms/algorithms/custom/flexlogic_namespace.h>
-
 
 //===================================================================================================================================================
 //	список переменных
@@ -25,14 +20,13 @@ namespace {
 //===================================================================================================================================================
 //	Конструктор класса
 //===================================================================================================================================================
-CfcNewLink::CfcNewLink(CfcSocket* socket, /*const QPointF& mouse_point,*/ QGraphicsItem* parent) : QGraphicsObject(parent)
+CfcNewLink::CfcNewLink(CfcSocket* socket, QGraphicsItem* parent) : QGraphicsObject(parent)
 {
     _released = false;
     _current_socket = socket;
     _source_socket = nullptr;
     _target_socket = nullptr;
     _mouse_point = socket->scenePos();
-    //setZValue(25);
 }
 
 
@@ -76,7 +70,7 @@ void CfcNewLink::paint(QPainter* painter, const QStyleOptionGraphicsItem* option
 {
     //  Настройка вывода
     painter->save();
-    painter->setPen(QPen(FlexLogic::select_color, 1, Qt::DotLine));
+    painter->setPen(QPen(select_color, 1, Qt::DotLine));
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setBrush(QBrush());
 
@@ -84,7 +78,7 @@ void CfcNewLink::paint(QPainter* painter, const QStyleOptionGraphicsItem* option
     painter->drawPath(path());
 
     //	Вывод точек
-    painter->setPen(QPen(FlexLogic::select_color, 0));
+    painter->setPen(QPen(select_color, 0));
     painter->setBrush(QBrush(Qt::white));
 
     QList<QPointF> cfc_points = points();

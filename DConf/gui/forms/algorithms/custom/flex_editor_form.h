@@ -28,8 +28,6 @@
 //	Подключение модулей проекта
 //===================================================================================================================================================
 #include <data_model/dc_data_manager.h>
-#include <gui/forms/algorithms/custom/Editor/editor_scene.h>
-#include <gui/forms/algorithms/custom/dep_parser.h>
 //
 //
 #include "service_manager/service_manager.h"

@@ -27,8 +27,6 @@ FORMS += \
     DConf.ui \
     gui/dialogs/frmCreateProj.ui \
     gui/dialogs/frmOpenProj.ui \
-    gui/dialogs/ParamDialogBI.ui \
-    gui/dialogs/ParamDialogBO.ui \
     gui/forms/interfaces_protocols/RS485/Modbus/master/CommandWidgets/ModbusWidgetCommonCommand.ui \
     gui/forms/interfaces_protocols/RS485/Modbus/master/DeviceCommandLibrary/CmdLibWidget.ui \
     gui/forms/interfaces_protocols/RS485/Modbus/master/ModbusFunctionWidgets/IModbusWidgetFunction.ui \
@@ -362,37 +360,10 @@ HEADERS += \
     utils/rapidxml.hpp \
     utils/rapidxml_print.hpp \
     version.h \
-    gui/dialogs/ParamDialogBI.h \
-    gui/dialogs/ParamDialogBO.h \
     gui/dialogs/info_list_dialog.h \
     gui/dialogs/params_dialog.h \
     gui/dialogs/scene_dialog.h \
-    gui/forms/algorithms/custom/Editor/dummy_link.h \
-    gui/forms/algorithms/custom/Editor/editor_link.h \
-    gui/forms/algorithms/custom/Editor/editor_link_data.h \
-    gui/forms/algorithms/custom/Editor/editor_node.h \
-    gui/forms/algorithms/custom/Editor/editor_node_data.h \
-    gui/forms/algorithms/custom/Editor/editor_scene.h \
-    gui/forms/algorithms/custom/Editor/editor_socket.h \
-    gui/forms/algorithms/custom/Editor/editor_socket_data.h \
-    gui/forms/algorithms/custom/Editor/graphic_line.h \
-    gui/forms/algorithms/custom/Editor/graphic_path.h \
-    gui/forms/algorithms/custom/Editor/title_item.h \
-    gui/forms/algorithms/custom/Nodes/and_node.h \
-    gui/forms/algorithms/custom/Nodes/bi_node.h \
-    gui/forms/algorithms/custom/Nodes/bo_node.h \
-    gui/forms/algorithms/custom/Nodes/generator_node.h \
-    gui/forms/algorithms/custom/Nodes/impulse_pf_node.h \
-    gui/forms/algorithms/custom/Nodes/impulse_zf_node.h \
-    gui/forms/algorithms/custom/Nodes/not_node.h \
-    gui/forms/algorithms/custom/Nodes/or_node.h \
-    gui/forms/algorithms/custom/Nodes/return_delay_node.h \
-    gui/forms/algorithms/custom/Nodes/rs_trigger_node.h \
-    gui/forms/algorithms/custom/Nodes/trigger_delay_node.h \
-    gui/forms/algorithms/custom/Nodes/xor_node.h \
-    gui/forms/algorithms/custom/dep_parser.h \
     gui/forms/algorithms/custom/flex_editor_form.h \
-    gui/forms/algorithms/custom/flexlogic_namespace.h \
     gui/forms/main/filesystem_page.h \
     gui/forms/input_output/inputs/dins_board_widget.h \
     gui/forms/input_output/inputs/dins_external_form.h \
@@ -704,37 +675,10 @@ SOURCES += \
     utils/bindings_update.cpp \
     utils/cfg_path.cpp \
     utils/qzip.cpp \
-    gui/dialogs/ParamDialogBI.cpp \
-    gui/dialogs/ParamDialogBO.cpp \
     gui/dialogs/info_list_dialog.cpp \
     gui/dialogs/params_dialog.cpp \
     gui/dialogs/scene_dialog.cpp \
-    gui/forms/algorithms/custom/Editor/dummy_link.cpp \
-    gui/forms/algorithms/custom/Editor/editor_link.cpp \
-    gui/forms/algorithms/custom/Editor/editor_link_data.cpp \
-    gui/forms/algorithms/custom/Editor/editor_node.cpp \
-    gui/forms/algorithms/custom/Editor/editor_node_data.cpp \
-    gui/forms/algorithms/custom/Editor/editor_scene.cpp \
-    gui/forms/algorithms/custom/Editor/editor_socket.cpp \
-    gui/forms/algorithms/custom/Editor/editor_socket_data.cpp \
-    gui/forms/algorithms/custom/Editor/graphic_line.cpp \
-    gui/forms/algorithms/custom/Editor/graphic_path.cpp \
-    gui/forms/algorithms/custom/Editor/title_item.cpp \
-    gui/forms/algorithms/custom/Nodes/and_node.cpp \
-    gui/forms/algorithms/custom/Nodes/bi_node.cpp \
-    gui/forms/algorithms/custom/Nodes/bo_node.cpp \
-    gui/forms/algorithms/custom/Nodes/generator_node.cpp \
-    gui/forms/algorithms/custom/Nodes/impulse_pf_node.cpp \
-    gui/forms/algorithms/custom/Nodes/impulse_zf_node.cpp \
-    gui/forms/algorithms/custom/Nodes/not_node.cpp \
-    gui/forms/algorithms/custom/Nodes/or_node.cpp \
-    gui/forms/algorithms/custom/Nodes/return_delay_node.cpp \
-    gui/forms/algorithms/custom/Nodes/rs_trigger_node.cpp \
-    gui/forms/algorithms/custom/Nodes/trigger_delay_node.cpp \
-    gui/forms/algorithms/custom/Nodes/xor_node.cpp \
-    gui/forms/algorithms/custom/dep_parser.cpp \
     gui/forms/algorithms/custom/flex_editor_form.cpp \
-    gui/forms/algorithms/custom/flexlogic_namespace.cpp \
     gui/forms/main/filesystem_page.cpp \
     gui/forms/input_output/inputs/dins_board_widget.cpp \
     gui/forms/input_output/inputs/dins_external_form.cpp \

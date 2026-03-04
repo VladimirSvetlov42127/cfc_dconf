@@ -15,6 +15,7 @@
 #include <QStyleOptionGraphicsItem>
 #include <QPolygonF>
 #include <QRectF>
+#include <QGraphicsSceneMouseEvent>
 
 //===================================================================================================================================================
 //	Подключение модулей проекта
