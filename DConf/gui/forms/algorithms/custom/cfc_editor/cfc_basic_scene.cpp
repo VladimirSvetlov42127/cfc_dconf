@@ -2,9 +2,14 @@
 
 
 //===================================================================================================================================================
+//	Подключение внешних библиотек
+//===================================================================================================================================================
+#include <dpc/gui/dialogs/msg_box/MsgBox.h>
+
+//===================================================================================================================================================
 //	Подключение модулей проекта
 //===================================================================================================================================================
-#include <gui/forms/algorithms/custom/cfc_nodes/cfc_nodes_list.h>
+#include "gui/forms/algorithms/custom/cfc_nodes/cfc_nodes_list.h"
 
 
 //===================================================================================================================================================
@@ -367,6 +372,7 @@ void CfcBasicScene::removeLink(CfcLink* link)
         bo_node->setParam("signal", -1);
         bo_node->setParam("name", QString());
     }
+    removeItem(link);
     delete link;
     update();
 }
@@ -376,6 +382,15 @@ void CfcBasicScene::removeNode(CfcNode* node)
     //  Удаление элементов BI/BO
     if (node->name() == "BI") {
         CfcBI* bi_node = static_cast<CfcBI*>(node);
+
+        //  Проверка на гибкую логику
+        // auto service_data = bi_node->cfcInput();
+        // if (!CheckCfc(service_data->source()->targets())) {
+        //     QString info = "Привязка уже используется в алгоритме гибкой логики! \nДля удаления переназначьте используемый сигнал. ";
+        //     Dpc::Gui::MsgBox::error(info);
+        //     return;
+        // }
+
         if (bi_node->cfcInput()) {
             if (bi_node->cfcInput()->source())
                 bi_node->cfcInput()->setSource(nullptr);
@@ -384,12 +399,22 @@ void CfcBasicScene::removeNode(CfcNode* node)
         CfcSocket* socket= node->sockets().at(0);
         for (int i = 0; i < socket->links().count(); i++)
             delete socket->links().at(i);
+        removeItem(node);
         delete node;
         return;
     }
 
     if (node->name() == "BO") {
         CfcBO* bo_node = static_cast<CfcBO*>(node);
+
+        //  Проверка на гибкую логику
+        // auto service_data = bo_node->cfcOutput();
+        // if (!CheckCfc(service_data->target()->targets())) {
+        //     QString info = "Привязка уже используется в алгоритме гибкой логики! \nДля удаления переназначьте используемый сигнал. ";
+        //     Dpc::Gui::MsgBox::error(info);
+        //     return;
+        // }
+
         if (bo_node->cfcOutput()) {
             if (bo_node->cfcOutput()->target())
                 bo_node->cfcOutput()->setTarget(nullptr);
@@ -398,6 +423,7 @@ void CfcBasicScene::removeNode(CfcNode* node)
         CfcSocket* socket= node->sockets().at(0);
         for (int i = 0; i < socket->links().count(); i++)
             delete socket->links().at(i);
+        removeItem(node);
         delete node;
         return;
     }
@@ -408,6 +434,7 @@ void CfcBasicScene::removeNode(CfcNode* node)
         for (int ii = 0; ii < socket->links().count(); ii++)
             delete socket->links().at(ii);
     }
+    removeItem(node);
     delete node;
 
     return;
@@ -440,6 +467,19 @@ CfcNode* CfcBasicScene::copyNode(CfcNode* source)
     return node;
 }
 
+bool CfcBasicScene::CheckCfc(QList<TargetElement*> targets) const
+{
+    if (targets.isEmpty())
+        return true;
+    for (int i = 0; i < targets.count(); i++) {
+        if (!targets.at(i))
+            continue;
+        CfcServiceInput* target = static_cast<CfcServiceInput*>(targets.at(i));
+        if (target)
+            return false;
+    }
+    return true;
+}
 
 
 

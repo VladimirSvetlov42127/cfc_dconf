@@ -84,6 +84,7 @@ private:
     void removeLink(CfcLink* link);
     void removeNode(CfcNode* node);
     CfcNode* copyNode(CfcNode* source);
+    bool CheckCfc(QList<TargetElement*> targets) const;
 
 signals:
     //===============================================================================================================================================
