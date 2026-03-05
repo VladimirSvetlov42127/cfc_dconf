@@ -20,8 +20,7 @@
 #include "service_manager/service_manager.h"
 #include "gui/forms/algorithms/custom/cfc_editor/cfc_node.h"
 #include "gui/forms/algorithms/custom/cfc_editor/cfc_link.h"
-#include "gui/forms/algorithms/custom/cfc_editor/cfc_title.h"
-#include "gui/forms/algorithms/custom/cfc_editor/title_item.h"
+#include "gui/forms/algorithms/custom/cfc_editor/cfc_title_item.h"
 
 
 //===================================================================================================================================================
@@ -47,8 +46,8 @@ public:
     QList<CfcLink*> bufferLinks() const { return _buffer_links; }
     ServiceManager* serviceManager() const { return _service_manager; }
     CfcAlgService* cfcService() const { return _cfc_service; }
-    void setTitle(const QString& title) { _title_item->SetTitle(title); }
-    QString title() const {return _title_item->Title(); }
+    void setTitle(const QString& title) { _title_item->setTitle(title); }
+    QString title() const {return _title_item->title(); }
     bool gridEnabled() const { return _grid_enable; }
     void setGrid(bool flag) { _grid_enable = flag; }
     uint16_t bufferCount() { return _buffer_nodes.count() + _buffer_links.count(); }
@@ -100,8 +99,7 @@ private:
     //	Свойства класса
     //===============================================================================================================================================
     QMenu* _context_menu;                       //  Контекстное меню сцены
-    TitleItem* _title_item;
-    // CfcTitle* _title_item;                      //  Объект заголовка окна
+    CfcTitleItem* _title_item;                  //  Объект заголовка окна
     QList<CfcNode*> _buffer_nodes;              //  Список узлов для копирования
     QList<CfcLink*> _buffer_links;              //  Список связей для копирования
     ServiceManager* _service_manager;           //  Менеджер сервисов

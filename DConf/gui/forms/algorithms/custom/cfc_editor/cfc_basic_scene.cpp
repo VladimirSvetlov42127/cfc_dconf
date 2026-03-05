@@ -39,9 +39,9 @@ CfcBasicScene::CfcBasicScene(uint16_t id, ServiceManager* service_manager, const
     // _title_item = new CfcTitle(title);
     // addItem(_title_item);
     // _title_item->setPos((sceneRect().width() + _title_item->width()) / 2 + 150, 0);
-    title == QString() ? _title_item = new TitleItem("Алгоритм гибкой логики") : _title_item = new TitleItem(title);
+    title == QString() ? _title_item = new CfcTitleItem("Алгоритм гибкой логики") : _title_item = new CfcTitleItem(title);
     addItem(_title_item);
-    _title_item->setPos((sceneRect().width() + _title_item->Width()) / 2, 0);
+    _title_item->setPos((sceneRect().width() + _title_item->titleWidth()) / 2, 0);
 
     setItemIndexMethod(QGraphicsScene::NoIndex);
     setBackgroundBrush(scene_bkcolor);

@@ -1,4 +1,4 @@
-#include "title_item.h"
+#include "cfc_title_item.h"
 
 
 //===================================================================================================================================================
@@ -24,16 +24,14 @@
 //===================================================================================================================================================
 //	Конструктор и деструктор класса
 //===================================================================================================================================================
-TitleItem::TitleItem(QString title, QGraphicsItem* parent) : QGraphicsObject(parent)
+CfcTitleItem::CfcTitleItem(QString title, QGraphicsItem* parent) : QGraphicsObject(parent)
 {
     //  Свойства класса
     _title = title;
     _title_font = QFont("Arial");
     _title_font.setPixelSize(16);
     _title_font.setBold(true);
-    _min_width = 0;
-    _menu = new QMenu;
-    _menu->addAction("Свойства", this, &TitleItem::ChangeName);
+    _menu.addAction("Свойства", this, &CfcTitleItem::changeName);
 
     //  Флаги объекта
     setAcceptHoverEvents(false);
@@ -42,16 +40,11 @@ TitleItem::TitleItem(QString title, QGraphicsItem* parent) : QGraphicsObject(par
     setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 }
 
-TitleItem::~TitleItem()
-{
-    delete _menu;
-}
-
 
 //===================================================================================================================================================
 //	Методы работы со свойствами класса
 //===================================================================================================================================================
-int TitleItem::Width()
+int CfcTitleItem::titleWidth()
 {
     QFontMetrics fm(_title_font);
     return fm.horizontalAdvance(_title);
@@ -60,14 +53,14 @@ int TitleItem::Width()
 //===================================================================================================================================================
 //	Виртуальные методы класса
 //===================================================================================================================================================
-QRectF TitleItem::boundingRect() const
+QRectF CfcTitleItem::boundingRect() const
 {
     QFontMetrics fm(_title_font);
     int width = fm.horizontalAdvance(_title) + 10;
     return QRectF(QPointF(0, 0), QSizeF(width, 25));
 }
 
-void TitleItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void CfcTitleItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     QRectF text_rectangle(boundingRect().topLeft(), QPointF(boundingRect().right(), boundingRect().bottom()));
     painter->setFont(_title_font);
@@ -79,7 +72,7 @@ void TitleItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
 //===================================================================================================================================================
 //	Обработка сигналов мышки
 //===================================================================================================================================================
-void TitleItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
+void CfcTitleItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     //  Проверка области срабатывания мышки
     if (!shape().contains(event->pos())) {
@@ -87,7 +80,7 @@ void TitleItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
         return; }
 
     //  Нажатие правой клавиши
-    if (event->buttons() & Qt::RightButton) _menu->exec(event->screenPos());
+    if (event->buttons() & Qt::RightButton) _menu.exec(event->screenPos());
     QGraphicsItem::mousePressEvent(event);
 
     return;
@@ -96,7 +89,7 @@ void TitleItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 //===================================================================================================================================================
 //  Обработка сигналов меню
 //===================================================================================================================================================
-void TitleItem::ChangeName()
+void CfcTitleItem::changeName()
 {
     SceneDialog* dialog = new SceneDialog(_title);
     dialog->exec();
