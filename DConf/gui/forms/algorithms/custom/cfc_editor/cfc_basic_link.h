@@ -46,21 +46,17 @@ public:
     CfcSocket* target() const { return _target; }
     QString targetID() const { return _target && _target->parent() ? _target->parent()->id() : _target_id; }
     int targetIndex() const { return _target ? _target->index() : _target_index; }
-    void noNeedUpdate() { _need_update = false; }
-    bool isNeedUpdate() const { return _need_update; }
     QList<QPointF> points() const { return _points; };
     void setPoints(const QList<QPointF>& points) { _points = points;};
 
     void setSource(CfcSocket* source);
     void setTarget(CfcSocket* target);
     QList<CfcLine> lines() const;
-    QPolygonF polygon() const;
+    // QPolygonF polygon() const;
     void normalize();
     bool addNode(const QPointF& node);
     int selectedLine(const QPointF& point);
     bool moveLine(int line, const QPointF& point);
-    void needUpdate();
-    void move();
 
     //===============================================================================================================================================
     //	Сериализация элемента
@@ -86,7 +82,6 @@ private:
     QString _target_id;                     //  ID цели для работы с XML
     int _target_index;                      //  Индекс сокета цели для работы с XML
     QList<QPointF> _points;                 //  Список точек соединения;
-    bool _need_update;                      //  Флаг обновления изображения
 };
 
 

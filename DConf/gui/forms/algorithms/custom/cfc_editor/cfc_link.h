@@ -42,17 +42,21 @@ public:
 	//===============================================================================================================================================
     //	Открытые методы класса
 	//===============================================================================================================================================
-    virtual QRectF boundingRect() const override;
-    virtual QPainterPath shape() const override;
+    void noNeedUpdate() { _need_update = false; }
+    bool isNeedUpdate() const { return _need_update; }
+    void needUpdate();
+    void move();
 
-//protected:
     //===============================================================================================================================================
     //	Перегружаемые методы класса
     //===============================================================================================================================================
+    virtual QRectF boundingRect() const override;
+    virtual QPainterPath shape() const override;
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
     virtual void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+
 
 private slots:
 	//===============================================================================================================================================
@@ -68,6 +72,7 @@ private:
     QPainterPath path() const;
     void updatePath();
     void paintSelected(QPainter* painter);
+    QPolygonF polygon() const;
     bool less(const QPointF& p1, const QPointF& p2) const;
     void sortOnLine(CfcLine& line, QList<QPointF>& list);
 
@@ -75,6 +80,7 @@ private:
 	//	Свойства класса
 	//===============================================================================================================================================
     bool _is_moving;                        //  Признак перемещения связи
+    mutable bool _need_update;              //  Флаг обновления изображения
     QMenu _menu;                            //  Контекстное меню
     QPointF _menu_point;                    //  Точка вызова контекстного меню
     QPainterPath _path;                     //  Набор точек для вывода соединения

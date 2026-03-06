@@ -114,9 +114,13 @@ void CfcNewLink::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
     _mouse_point = event->scenePos();
     CfcSocket* socket = dynamic_cast<CfcSocket*>(scene()->itemAt(_mouse_point, QTransform()));
-    if (!socket)
+    if (!socket && scene()->views().at(0)->cursor() != Qt::CrossCursor)
         scene()->views().at(0)->setCursor(Qt::CrossCursor);
-    if (socket && (socket->socketType() == _current_socket->socketType())) scene()->views().at(0)->setCursor(Qt::ForbiddenCursor);
+
+    // if (socket && (socket->socketType() == _current_socket->socketType())) scene()->views().at(0)->setCursor(Qt::ForbiddenCursor);
+    if (socket)
+        socket->socketType() == _current_socket->socketType() ? scene()->views().at(0)->setCursor(Qt::ForbiddenCursor) :
+        scene()->views().at(0)->setCursor(Qt::DragCopyCursor);
 
     update();
     QGraphicsItem::mouseMoveEvent(event);

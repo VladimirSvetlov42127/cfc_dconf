@@ -5,7 +5,7 @@
 //	Подключение модулей проекта
 //===================================================================================================================================================
 #include "gui/forms/algorithms/custom/cfc_editor/cfc_basic_node.h"
-#include "gui/forms/algorithms/custom/cfc_editor/cfc_basic_link.h"
+#include "gui/forms/algorithms/custom/cfc_editor/cfc_link.h"
 
 //===================================================================================================================================================
 //	Конструктор класса
@@ -23,7 +23,7 @@ CfcSocket::CfcSocket(uint8_t index, CfcBasicNode* node, QGraphicsItem* parent) :
 //===================================================================================================================================================
 //	Базовые методы класса
 //===================================================================================================================================================
-void CfcSocket::appendLink(CfcBasicLink* link)
+void CfcSocket::appendLink(CfcLink* link)
 {
     if (!link)
         return;
@@ -31,7 +31,7 @@ void CfcSocket::appendLink(CfcBasicLink* link)
 }
 
 
-void CfcSocket::removeLink(CfcBasicLink* link)
+void CfcSocket::removeLink(CfcLink* link)
 {
     if (!link)
         return;

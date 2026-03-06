@@ -35,6 +35,7 @@ CfcLink::CfcLink(QString id, QList<QPointF> points) : CfcBasicLink(id, points)
     //  Свойства класса
     _sorting_line = nullptr;
     _is_moving = false;
+    _need_update = true;
     _path = QPainterPath();
 
     //  Инициализация меню
@@ -48,12 +49,52 @@ CfcLink::CfcLink(QDomNode xml) : CfcBasicLink(xml)
     //  Свойства класса
     _sorting_line = nullptr;
     _is_moving = false;
+    _need_update = true;
     _path = QPainterPath();
 
     //  Инициализация меню
     _menu_point = QPointF();
     _menu.addAction("Добавить узел", this, &CfcLink::linkAddNode);
     _menu.addAction("Убрать лишние узлы", this, &CfcLink::removeNodes);
+}
+
+
+//===================================================================================================================================================
+//	открытые методы класса
+//===================================================================================================================================================
+void CfcLink::needUpdate()
+{
+    _need_update = true;
+    update();
+}
+
+void CfcLink::move()
+{
+    bool source_selected = false;
+    bool target_selected = false;
+    if (source()->parent()->isSelected())
+        source_selected = true;
+    if (target()->parent()->isSelected())
+        target_selected = true;
+    QList<QPointF> cfc_points = points();
+
+    if (target_selected && source_selected) {
+        QPointF delta = source()->scenePos() - cfc_points[0];
+        for (int i = 0; i < cfc_points.count(); i++)
+            cfc_points[i] = cfc_points[i] + delta;
+    }
+
+    if (source_selected) {
+        cfc_points[0] = source()->scenePos();
+        cfc_points[1].setY( cfc_points[0].y());
+    }
+
+    if (target_selected) {
+        cfc_points[cfc_points.count() - 1] = target()->scenePos();
+        cfc_points[cfc_points.count() - 2].setY(cfc_points[cfc_points.count() - 1].y());
+    }
+    setPoints(cfc_points);
+    needUpdate();
 }
 
 
@@ -191,6 +232,9 @@ QPainterPath CfcLink::path() const
     _path.moveTo(points().at(0));
     for (int i = 1; i < points().count(); i++)
         _path.lineTo(points().at(i));
+
+    _need_update = false;
+
 //    noNeedUpdate();
 
     //  Заполнение списка графических элементов
@@ -272,6 +316,19 @@ void CfcLink::paintSelected(QPainter* painter)
 
     return;
 }
+
+QPolygonF CfcLink::polygon() const
+{
+    QPolygonF cfc_polygon = QPolygonF();
+    QList<QPointF> cfc_points = points();
+    if (cfc_points.isEmpty()) return cfc_polygon;
+
+    for (int i = 0; i < cfc_points.count(); i++)
+        cfc_polygon.append(cfc_points.at(i));
+
+    return cfc_polygon;
+}
+
 
 bool CfcLink::less(const QPointF& p1, const QPointF& p2) const
 {

@@ -16,7 +16,7 @@
 //	Подключение модулей проекта
 //===================================================================================================================================================
 class CfcBasicNode;
-class CfcBasicLink;
+class CfcLink;
 
 
 //===================================================================================================================================================
@@ -46,9 +46,9 @@ public:
     uint8_t selectShape() const { return _select_shape; }
     bool highLight() const { return _highlight; }
     CfcBasicNode* parent() { return _parent; }
-    QList<CfcBasicLink*> links() {return _links; }
-    void appendLink(CfcBasicLink* link);
-    void removeLink(CfcBasicLink* link);
+    QList<CfcLink*> links() {return _links; }
+    void appendLink(CfcLink* link);
+    void removeLink(CfcLink* link);
 
     //===============================================================================================================================================
     //	Виртуальные методы класса
@@ -73,7 +73,7 @@ private:
     bool _highlight;                            //	Признак выделения сокета (для визуализации при наведении мыши)
     uint8_t _select_shape = 10;                 //  Размер области сокета
     CfcBasicNode* _parent;                      //  Класс узла, котороиу принадлежит сокет
-    QList<CfcBasicLink*> _links;                //  Список соединений на выходе из элемента
+    QList<CfcLink*> _links;                     //  Список соединений на выходе из элемента
 };
 
 

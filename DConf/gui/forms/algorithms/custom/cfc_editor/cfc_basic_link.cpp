@@ -24,7 +24,6 @@ CfcBasicLink::CfcBasicLink(QString id, QList<QPointF> points, QGraphicsItem* par
     else _id = QString::number(++_counter);
 
     //  Свойства класса
-    _need_update = true;
     _source = nullptr;
     _target = nullptr;
     _source_id = QString();
@@ -46,7 +45,6 @@ CfcBasicLink::CfcBasicLink(QString id, QList<QPointF> points, QGraphicsItem* par
 CfcBasicLink::CfcBasicLink(QDomNode xml, QGraphicsItem* parent) : QGraphicsObject(parent)
 {
     //  Свойства класса
-    _need_update = true;
     _source = nullptr;
     _target = nullptr;
     _source_id = QString();
@@ -105,18 +103,6 @@ CfcBasicLink::CfcBasicLink(QDomNode xml, QGraphicsItem* parent) : QGraphicsObjec
 //===================================================================================================================================================
 //	Открытые методы класса
 //===================================================================================================================================================
-// QList<QPointF> CfcBasicLink::points() const
-// {
-//     QList<QPointF> cfc_points = _points;
-//     cfc_points[0] = source()->scenePos();
-//     cfc_points[1].setY(source()->scenePos().y());
-//     int last = _points.count() - 1;
-//     cfc_points[last] = target()->scenePos();
-//     cfc_points[last-1].setY(target()->scenePos().y());
-
-//     return cfc_points;
-// }
-
 void CfcBasicLink::setSource(CfcSocket* source)
 {
     _source =  source;
@@ -153,18 +139,6 @@ QList<CfcLine> CfcBasicLink::lines() const
     }
 
     return lines;
-}
-
-QPolygonF CfcBasicLink::polygon() const
-{
-    QPolygonF cfc_polygon = QPolygonF();
-    QList<QPointF> cfc_points = points();
-    if (cfc_points.isEmpty()) return cfc_polygon;
-
-    for (int i = 0; i < cfc_points.count(); i++)
-        cfc_polygon.append(cfc_points.at(i));
-
-    return cfc_polygon;
 }
 
 void CfcBasicLink::normalize()
@@ -241,39 +215,6 @@ bool CfcBasicLink::moveLine(int line, const QPointF& point)
     arrangePoints(old_points);
 
     return true;
-}
-
-void CfcBasicLink::needUpdate()
-{
-    _need_update = true;
-    update();
-}
-
-void CfcBasicLink::move()
-{
-    bool source_selected = false;
-    bool target_selected = false;
-    if (source()->parent()->isSelected())
-        source_selected = true;
-    if (target()->parent()->isSelected())
-        target_selected = true;
-
-    if (target_selected && source_selected) {
-        QPointF delta = source()->scenePos() - _points[0];
-        for (int i = 0; i < _points.count(); i++)
-            _points[i] = _points[i] + delta;
-    }
-
-    if (source_selected) {
-        _points[0] = source()->scenePos();
-        _points[1].setY( _points[0].y());
-    }
-
-    if (target_selected) {
-        _points[_points.count() - 1] = target()->scenePos();
-        _points[_points.count() - 2].setY(_points[_points.count() - 1].y());
-    }
-    needUpdate();
 }
 
 
