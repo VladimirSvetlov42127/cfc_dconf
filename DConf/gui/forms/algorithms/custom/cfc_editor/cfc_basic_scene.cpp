@@ -464,15 +464,6 @@ void CfcBasicScene::removeNode(CfcNode* node)
     //  Удаление элементов BI/BO
     if (node->name() == "BI") {
         CfcBI* bi_node = static_cast<CfcBI*>(node);
-
-        //  Проверка на гибкую логику
-        // auto service_data = bi_node->cfcInput();
-        // if (!CheckCfc(service_data->source()->targets())) {
-        //     QString info = "Привязка уже используется в алгоритме гибкой логики! \nДля удаления переназначьте используемый сигнал. ";
-        //     Dpc::Gui::MsgBox::error(info);
-        //     return;
-        // }
-
         if (bi_node->cfcInput()) {
             if (bi_node->cfcInput()->source())
                 bi_node->cfcInput()->setSource(nullptr);
@@ -480,7 +471,8 @@ void CfcBasicScene::removeNode(CfcNode* node)
         }
         CfcSocket* socket= node->sockets().at(0);
         for (int i = 0; i < socket->links().count(); i++)
-            delete socket->links().at(i);
+            if (socket->links().at(i))
+                delete socket->links().at(i);
         removeItem(node);
         delete node;
         return;
@@ -488,15 +480,6 @@ void CfcBasicScene::removeNode(CfcNode* node)
 
     if (node->name() == "BO") {
         CfcBO* bo_node = static_cast<CfcBO*>(node);
-
-        //  Проверка на гибкую логику
-        // auto service_data = bo_node->cfcOutput();
-        // if (!CheckCfc(service_data->target()->targets())) {
-        //     QString info = "Привязка уже используется в алгоритме гибкой логики! \nДля удаления переназначьте используемый сигнал. ";
-        //     Dpc::Gui::MsgBox::error(info);
-        //     return;
-        // }
-
         if (bo_node->cfcOutput()) {
             if (bo_node->cfcOutput()->target())
                 bo_node->cfcOutput()->setTarget(nullptr);
@@ -504,7 +487,8 @@ void CfcBasicScene::removeNode(CfcNode* node)
         }
         CfcSocket* socket= node->sockets().at(0);
         for (int i = 0; i < socket->links().count(); i++)
-            delete socket->links().at(i);
+            if (socket->links().at(i))
+                delete socket->links().at(i);
         removeItem(node);
         delete node;
         return;
@@ -514,7 +498,8 @@ void CfcBasicScene::removeNode(CfcNode* node)
     for (int i = 0; i < node->sockets().count(); i++) {
         CfcSocket* socket= node->sockets().at(i);
         for (int ii = 0; ii < socket->links().count(); ii++)
-            delete socket->links().at(ii);
+            if (socket->links().at(ii))
+                delete socket->links().at(ii);
     }
     removeItem(node);
     delete node;
