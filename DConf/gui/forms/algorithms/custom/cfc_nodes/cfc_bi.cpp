@@ -23,6 +23,8 @@ namespace {
     int socket_radius = 3;
     QColor shape_color = QColor(70, 100, 120);
     QColor shape_bkcolor = QColor(245, 245, 245);
+    QColor notbinded_bkcolor = QColor(255, 222, 222);
+
     int shape_width = 2;
     QFont CHANNEL_TEXT_FONT = QFont("Arial", 11);
     QFont LABEL_TEXT_FONT = QFont("Arial", 11, QFont::Bold);
@@ -105,14 +107,14 @@ void CfcBI::paintElement(QPainter* painter)
     painter->save();
     painter->setPen(QPen(shape_color, shape_width, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     painter->setRenderHint(QPainter::Antialiasing);
-    painter->fillPath(path, shape_bkcolor);
     painter->drawPath(path);
+    cfcInput()->source() ? painter->fillPath(path, shape_bkcolor) : painter->fillPath(path, notbinded_bkcolor);
 
     //  Перегрузка параметров элемента
     inputReset();
 
     //  Вывод названия сигнала
-    QString text = param("name").value.toString();
+    QString text = cfcInput()->text();
 
     if (!text.isEmpty()) {
         QFontMetrics fm(CHANNEL_TEXT_FONT);

@@ -13,8 +13,12 @@ CfcServiceInput::CfcServiceInput(uint16_t id, uint8_t pin, DcParam *bindParam, C
 
 QString CfcServiceInput::name() const
 {
-    //return source() ? source()->name() : QString("Pin %1: вход").arg(pin());
-    return QString("Алг %1, пин %2 (Вход)").arg(m_parent->id() + 1).arg(pin() + 1);
+    return QString("Вход: алг %1, пин %2").arg(m_parent->id()).arg(pin() + 1);
+}
+
+QString CfcServiceInput::text() const
+{
+    return source() ? source()->text() : name();
 }
 
 void CfcServiceInput::onSourceChanged(InputSignal *newSource, InputSignal *prevSource)

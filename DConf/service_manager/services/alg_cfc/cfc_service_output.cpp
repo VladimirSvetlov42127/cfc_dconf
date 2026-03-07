@@ -13,8 +13,12 @@ CfcServiceOutput::CfcServiceOutput(uint16_t id, uint8_t pin, DcParam *bindParam,
 
 QString CfcServiceOutput::name() const
 {
-    //return target() ? target()->text() : QString("Pin %1: выход").arg(pin())
-    return QString("Алг %1, пин %2").arg(m_parent->id() + 1).arg(pin() + 1);
+    return QString("Выход: алг %1, пин %2").arg(m_parent->id()).arg(pin() + 1);
+}
+
+QString CfcServiceOutput::text() const
+{
+    return target() ? target()->text() : name();
 }
 
 void CfcServiceOutput::onTargetChanged(VirtualInputSignal *newTarget, VirtualInputSignal *prevTarget)

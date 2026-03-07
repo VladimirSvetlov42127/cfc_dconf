@@ -17,6 +17,7 @@ public:
     virtual ~CfcServiceOutput() = default;
 
     QString name() const override;
+    QString text() const;
 
 protected:
     void onTargetChanged(VirtualInputSignal *newTarget, VirtualInputSignal *prevTarget) override;
