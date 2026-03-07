@@ -118,8 +118,8 @@ void CfcBI::paintElement(QPainter* painter)
 
     if (!text.isEmpty()) {
         QFontMetrics fm(CHANNEL_TEXT_FONT);
-        QRectF text_rect(QPointF(rectangle.x() + rectangle.height(), rectangle.y()), QPointF(rectangle.right() - 10, rectangle.bottom()));
-        int text_width = fm.horizontalAdvance(text) + 40 + rectangle.height();
+        QRectF text_rect(QPointF(rectangle.x() + 10, rectangle.y()), QPointF(rectangle.right() - 10, rectangle.bottom()));
+        int text_width = fm.horizontalAdvance(text) + rectangle.height();
         int old_width = size().width();
         int delta_width = text_width - old_width;
         if (abs(delta_width) > 10) {
