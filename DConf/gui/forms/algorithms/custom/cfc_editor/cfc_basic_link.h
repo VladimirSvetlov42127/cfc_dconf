@@ -48,11 +48,9 @@ public:
     int targetIndex() const { return _target ? _target->index() : _target_index; }
     QList<QPointF> points() const { return _points; };
     void setPoints(const QList<QPointF>& points) { _points = points;};
-
     void setSource(CfcSocket* source);
     void setTarget(CfcSocket* target);
     QList<CfcLine> lines() const;
-    // QPolygonF polygon() const;
     void normalize();
     bool addNode(const QPointF& node);
     int selectedLine(const QPointF& point);
