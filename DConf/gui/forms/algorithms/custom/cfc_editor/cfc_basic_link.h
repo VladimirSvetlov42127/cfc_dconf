@@ -57,6 +57,7 @@ public:
     bool addNode(const QPointF& node);
     int selectedLine(const QPointF& point);
     bool moveLine(int line, const QPointF& point);
+    QPolygonF polygon() const;
 
     //===============================================================================================================================================
     //	Сериализация элемента

@@ -26,7 +26,7 @@ namespace {
     QColor notbinded_bkcolor = QColor(255, 222, 222);
 
     int shape_width = 2;
-    QFont CHANNEL_TEXT_FONT = QFont("Arial", 11);
+    QFont CHANNEL_TEXT_FONT = QFont("Arial", 10);
     QFont LABEL_TEXT_FONT = QFont("Arial", 11, QFont::Bold);
     QFont INTO_TEXT_FONT = QFont("Arial", 8);
 }

@@ -302,5 +302,16 @@ void CfcBasicLink::arrangePoints(QList<QPointF> old_points)
     setPoints(new_points);
 }
 
+QPolygonF CfcBasicLink::polygon() const
+{
+    QPolygonF cfc_polygon = QPolygonF();
+    QList<QPointF> cfc_points = points();
+    if (cfc_points.isEmpty()) return cfc_polygon;
+
+    for (int i = 0; i < cfc_points.count(); i++)
+        cfc_polygon.append(cfc_points.at(i));
+
+    return cfc_polygon;
+}
 
 

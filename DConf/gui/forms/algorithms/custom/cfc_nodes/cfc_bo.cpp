@@ -21,7 +21,7 @@ namespace {
     QColor notbinded_bkcolor = QColor(255, 222, 222);
 
     int shape_width = 2;
-    QFont CHANNEL_TEXT_FONT = QFont("Arial", 11);
+    QFont CHANNEL_TEXT_FONT = QFont("Arial", 10);
     QFont LABEL_TEXT_FONT = QFont("Arial", 11, QFont::Bold);
     QFont INTO_TEXT_FONT = QFont("Arial", 8);
 }
@@ -114,6 +114,7 @@ void CfcBO::paintElement(QPainter* painter)
         int old_width = size().width();
         int delta_width = text_width - old_width;
         if (abs(delta_width) > 10) setSize(QSizeF(text_width, size().height()));
+        painter->setFont(CHANNEL_TEXT_FONT);
         painter->drawText(text_rect, Qt::AlignCenter, text);
     }
     update();

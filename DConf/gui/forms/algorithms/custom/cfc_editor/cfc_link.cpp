@@ -21,6 +21,7 @@
 namespace {
     QColor connection_color = QColor(220, 95, 30);
     int connection_width = 2;
+    int intersection_radius = 5;
 
     uint8_t select_shape = 10;
     QColor select_color = QColor(Qt::blue);
@@ -130,15 +131,13 @@ void CfcLink::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, Q
 
 void CfcLink::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    QPointF position = QPointF((int)event->pos().x(), (int)event->pos().y());
-    // if (!shape().contains(event->pos())) {
-    //     event->setAccepted(false);
-    //     qDebug() << "shape";
-
-    //     return;
-    // }
+    if (!shape().contains(event->scenePos())) {
+        event->setAccepted(false);
+        return;
+    }
 
     //  Не реагирует на клик по узлу
+    QPointF position = QPointF((int)event->pos().x(), (int)event->pos().y());
     for (int i = 0; i < points().count(); i++) {
         QLineF line(position, points().at(i));
         if (line.length() < select_shape) {
@@ -231,83 +230,56 @@ QPainterPath CfcLink::path()
     if (!_need_update && _path.elementCount() == 0)
         return _path;
 
-    //  Заполнение списка графических элементов
-    qDebug() << "update";
+    //  Формирование соединения
     QPainterPath _path = QPainterPath();
     _path.moveTo(points().at(0));
     for (int i = 1; i < points().count(); i++)
         _path.lineTo(points().at(i));
-    qDebug() << _path;
-
     _need_update = false;
 
-//    noNeedUpdate();
-
     //  Заполнение списка графических элементов
-    // QList<QGraphicsItem*> items;
-    // QPainterPath default_path;
-    // default_path.moveTo(points().at(0));
-    // for (int i = 1; i < points().count(); i++)
-    //     default_path.lineTo(points().at(i));
-    // items = scene()->items(default_path, Qt::IntersectsItemShape, Qt::AscendingOrder);
+    QList<QGraphicsItem*> items = scene()->items(_path, Qt::IntersectsItemShape, Qt::AscendingOrder);
 
-    // //  Заполнение списка пересекаемых линий
-    // QList<CfcLine> under_lines;
-    // for (int i = 0; i < items.count(); i++) {
-    //     CfcLink* graph_link = dynamic_cast<CfcLink*>(items.at(i));
-    //     if (!graph_link) continue;
-    //     if (graph_link == this) break;
-    //     under_lines.append(graph_link->lines());
-    // }
-
-    // if (under_lines.isEmpty())
-    //     return _path;
-
-    //  Вывод линии с пересечениями
-    // QList<CfcLine> lines = CfcBasicLink::lines();
-    // _path = QPainterPath();
-    // _path.moveTo(points().at(0));
-    // for (int i = 0; i < lines.count(); i++) {
-    //     CfcLine line = lines.at(i);
-
-    //     //  Заполнение точек пересечения
-    //     QList<QPointF> intersections;
-    //     for (int j = 0; j < under_lines.count(); j++) {
-    //         QPointF ipoint;
-    //         if (line.intersects(under_lines.at(j), ipoint)) intersections.append(ipoint);
-    //     }
-    //     sortOnLine(line, intersections);
-
-    //     qreal sa = 180;
-    //     if (line.type() == CfcLine::HORIZONTAL)  sa = line.begin().x() >= line.end().x() ? 0 : 180;
-    //     if (line.type() == CfcLine::VERTICAL)    sa = line.begin().y() >= line.end().y() ? 270 : 90;
-    //     qreal la = (sa == 0 || sa == 90) ? 180 : -180;
-    //     for (int j = 0; j < intersections.count(); j++) {
-    //         QPointF ip = intersections.at(j);
-    //         int sw = intersection_radius;
-    //         _path.arcTo(QRectF(ip, ip).adjusted(-sw, -sw, sw, sw), sa, la); }
-    //     _path.lineTo(line.end());
-    //     under_lines.append(line);
-    // }
-
-    return _path;
-}
-
-void CfcLink::updatePath()
-{
-    needUpdate();
-    if (scene()) {
-        QList<QGraphicsItem*> items = scene()->items(shape(), Qt::IntersectsItemShape, Qt::AscendingOrder);
-        QList<QGraphicsItem*>::iterator it = items.begin();
-        while (it != items.end() && *it != this) it++;
-        while (it != items.end()) {
-            CfcLink* c = dynamic_cast<CfcLink*>(*it);
-            if (c) c->needUpdate();
-            it++;
-        }
+    //  Заполнение списка пересекаемых линий
+    QList<CfcLine> under_lines;
+    for (int i = 0; i < items.count(); i++) {
+        CfcLink* graph_link = dynamic_cast<CfcLink*>(items.at(i));
+        if (!graph_link) continue;
+        if (graph_link == this) break;
+        under_lines.append(graph_link->lines());
     }
 
-    return;
+    if (under_lines.isEmpty())
+        return _path;
+
+    //  Вывод линии с пересечениями
+    QList<CfcLine> lines = CfcBasicLink::lines();
+    _path = QPainterPath();
+    _path.moveTo(points().at(0));
+    for (int i = 0; i < lines.count(); i++) {
+        CfcLine line = lines.at(i);
+
+        //  Заполнение точек пересечения
+        QList<QPointF> intersections;
+        for (int j = 0; j < under_lines.count(); j++) {
+            QPointF ipoint;
+            if (line.intersects(under_lines.at(j), ipoint)) intersections.append(ipoint);
+        }
+        sortOnLine(line, intersections);
+
+        qreal sa = 180;
+        if (line.type() == CfcLine::HORIZONTAL)  sa = line.begin().x() >= line.end().x() ? 0 : 180;
+        if (line.type() == CfcLine::VERTICAL)    sa = line.begin().y() >= line.end().y() ? 270 : 90;
+        qreal la = (sa == 0 || sa == 90) ? 180 : -180;
+        for (int j = 0; j < intersections.count(); j++) {
+            QPointF ip = intersections.at(j);
+            int sw = intersection_radius;
+            _path.arcTo(QRectF(ip, ip).adjusted(-sw, -sw, sw, sw), sa, la); }
+        _path.lineTo(line.end());
+        under_lines.append(line);
+    }
+
+    return _path;
 }
 
 void CfcLink::paintSelected(QPainter* painter)
@@ -322,19 +294,6 @@ void CfcLink::paintSelected(QPainter* painter)
 
     return;
 }
-
-QPolygonF CfcLink::polygon() const
-{
-    QPolygonF cfc_polygon = QPolygonF();
-    QList<QPointF> cfc_points = points();
-    if (cfc_points.isEmpty()) return cfc_polygon;
-
-    for (int i = 0; i < cfc_points.count(); i++)
-        cfc_polygon.append(cfc_points.at(i));
-
-    return cfc_polygon;
-}
-
 
 bool CfcLink::less(const QPointF& p1, const QPointF& p2) const
 {

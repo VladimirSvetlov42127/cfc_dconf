@@ -42,8 +42,6 @@ public:
 	//===============================================================================================================================================
     //	Открытые методы класса
 	//===============================================================================================================================================
-    void noNeedUpdate() { _need_update = false; }
-    bool isNeedUpdate() const { return _need_update; }
     void needUpdate();
     void move();
 
@@ -70,9 +68,7 @@ private:
     //	Вспомогательные методы класса
     //===============================================================================================================================================
     QPainterPath path();
-    void updatePath();
     void paintSelected(QPainter* painter);
-    QPolygonF polygon() const;
     bool less(const QPointF& p1, const QPointF& p2) const;
     void sortOnLine(CfcLine& line, QList<QPointF>& list);
 
