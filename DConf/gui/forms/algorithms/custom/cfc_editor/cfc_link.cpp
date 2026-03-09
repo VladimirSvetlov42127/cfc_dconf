@@ -114,15 +114,17 @@ QPainterPath CfcLink::shape() const
     QPainterPathStroker ps;
     ps.setWidth(select_shape);
 
-    return ps.createStroke(path());
+    return ps.createStroke(_path);
 }
 
 void CfcLink::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     painter->save();
     painter->setPen(QPen(connection_color, connection_width, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    painter->drawPath(path());
-    if (isSelected()) paintSelected(painter);
+    _path = path();
+    painter->drawPath(_path);
+    if (isSelected())
+        paintSelected(painter);
     painter->restore();
 }
 
@@ -221,17 +223,21 @@ void CfcLink::removeNodes()
 //===================================================================================================================================================
 //	Вспомогательные методы класса
 //===================================================================================================================================================
-QPainterPath CfcLink::path() const
+QPainterPath CfcLink::path()
 {
     //  Проверка исходных данных
-    if (!isNeedUpdate() && _path != QPainterPath()) return _path;
-    if (!scene()) return _path;
+    if (!scene())
+        return _path;
+    if (!_need_update && _path.elementCount() == 0)
+        return _path;
 
     //  Заполнение списка графических элементов
+    qDebug() << "update";
     QPainterPath _path = QPainterPath();
     _path.moveTo(points().at(0));
     for (int i = 1; i < points().count(); i++)
         _path.lineTo(points().at(i));
+    qDebug() << _path;
 
     _need_update = false;
 
